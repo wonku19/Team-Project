@@ -34,7 +34,11 @@ public class CommentsController {
 
     @PutMapping("/comments")
     public ResponseEntity<Comments> update(@PathVariable Comments comments) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.update(comments));
+        Comments result = service.update(comments);
+        if (result != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(service.update(result));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @DeleteMapping("/comments/{id}")

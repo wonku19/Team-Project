@@ -34,7 +34,11 @@ public class RepliesController {
 
     @PutMapping("/replies")
     public ResponseEntity<Replies> update(@PathVariable Replies replies) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.update(replies));
+        Replies result = service.update(replies);
+        if (result != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @DeleteMapping("/replies/{id}")

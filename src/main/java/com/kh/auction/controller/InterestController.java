@@ -34,7 +34,11 @@ public class InterestController {
 
     @PutMapping("/interest")
     public ResponseEntity<Interest> update(@PathVariable Interest interest) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.update(interest));
+        Interest result = service.update(interest);
+        if(result != null){
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @DeleteMapping("/interest/{id}")
