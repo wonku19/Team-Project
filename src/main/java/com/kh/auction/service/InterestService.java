@@ -11,28 +11,38 @@ import java.util.List;
 public class InterestService {
 
     @Autowired
-    private InterestDAO dao;
+    private InterestDAO interestDAO;
+
+    // 게시글 관심 등록
+    public Interest create(Interest interest) {
+        return interestDAO.save(interest);
+    }
+
+    // 게시글 관심 등록 취소
+    public Interest delete(int id) {
+        Interest data = interestDAO.findById(id).orElse(null);
+        interestDAO.delete(data);
+        return data;
+    }
+
+    // 자신이 관심등록한 게시물 목록 조회
+    public List<Interest> findByMemberId(String id) {
+        return interestDAO.findByMemberId(id);
+    }
+
+
 
     public List<Interest> showAll() {
-        return dao.findAll();
+        return interestDAO.findAll();
     }
 
     public Interest show(int id) {
-        return dao.findById(id).orElse(null);
-    }
-
-    public Interest create(Interest interest) {
-        return dao.save(interest);
+        return interestDAO.findById(id).orElse(null);
     }
 
     public Interest update(Interest interest) {
-        return dao.save(interest);
+        return interestDAO.save(interest);
     }
 
-    public Interest delete(int id) {
-        Interest data = dao.findById(id).orElse(null);
-        dao.delete(data);
-        return data;
-    }
 
 }

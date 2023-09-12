@@ -44,4 +44,8 @@ public class MemberController {
     public ResponseEntity<Member> delete(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
     }
+
+    
+
+
 }

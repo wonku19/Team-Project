@@ -13,6 +13,16 @@ public class CommentsService {
     @Autowired
     private CommentsDAO dao;
 
+    // 게시글 1개에 따른 댓글 전체 조회
+    public List<Comments> boardCommentsList(int no) {
+        Comments target = dao.findById(no).orElse(null);
+        if (target != null) {
+            return dao.findByBoardComments(no);
+        }
+        return null;
+    }
+
+
     public List<Comments> showAll() {
         return dao.findAll();
     }
