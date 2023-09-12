@@ -10,7 +10,7 @@ import java.util.List;
 public interface RepliesDAO extends JpaRepository<Replies, Integer> {
 
     // 댓글 1개의 대댓글 전체 조회 - SELECT * FROM comments WHERE comment_id = ?
-    @Query(value = "SELECT * FROM comments WHERE comment_id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM replies WHERE comment_id = :id", nativeQuery = true)
     List<Comments> findByRepliesList(int id);
 
 }
