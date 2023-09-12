@@ -17,8 +17,8 @@ public class Comments {
 
     @Id
     @Column(name = "comment_id")
-//    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "commentSequence")
-//    @SequenceGenerator(name = "commentSequence", sequenceName = "SEQ_COMMENTS", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "commentSequence")
+    @SequenceGenerator(name = "commentSequence", sequenceName = "SEQ_COMMENTS", allocationSize = 1)
     private int commentId;
 
 
@@ -29,13 +29,13 @@ public class Comments {
 
     // 외래키
     // Member -> id
-//    @ManyToOne
-//    @JoinColumn(name = "id")
-//    private Member id;
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private Member id;
 
     // Auction -> auction
-//    @ManyToOne
-//    @JoinColumn(name = "auction_no")
-//    private Auction auctionNo;
+    @ManyToOne
+    @JoinColumn(name = "auction_no")
+    private AuctionBoard auctionNo;
 
 }
