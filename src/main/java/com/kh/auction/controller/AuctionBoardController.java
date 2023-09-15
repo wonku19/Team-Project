@@ -5,6 +5,7 @@ import com.kh.auction.domain.Category;
 import com.kh.auction.domain.Comments;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
+import com.kh.auction.service.CommentsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,11 @@ public class AuctionBoardController {
     private AuctionBoardService service;
 
     @Autowired
+    private CommentsService commentsService;
+
+    @Autowired
     private CategoryService category;
+
     @GetMapping("/auction")
     public ResponseEntity<List<AuctionBoard>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
@@ -50,12 +55,15 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
     }
     // 카테고리
-    @GetMapping("/auction/{auctionNo}")
+    @GetMapping("/auction/{auctionNo}/category")
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
         return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
     }
 
-
-
+    // 특정 경매 게시글에 달린 댓글들 조회
+    @GetMapping("/auction/{no}/comments")
+    public ResponseEntity<List<Comments>> showComments(@PathVariable int no) {
+        return ResponseEntity.status(HttpStatus.OK).body(commentsService.boardCommentsList(no));
+    }
 
 }

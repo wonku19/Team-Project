@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -44,5 +45,10 @@ public class AuctionBoard {
     @JoinColumn(name = "member_no") // 외래키 생성 or Member 엔티티의 기본키와 매핑
     private Member member;
 
+    @ManyToOne // AuctionBoard와 Category 사이의 다대일 관계를 표현
+    @JoinColumn(name = "category_id") // 카테고리 ID를 외래 키로 설정
+    private Category category;
 
+    @OneToMany(mappedBy = "auctionBoard", cascade = CascadeType.ALL) // AuctionBoard와 Comments 사이의 일대다 관계를 표현
+    private List<Comments> comments;
 }
