@@ -13,26 +13,26 @@ import java.util.List;
 @RequestMapping("/api/*")
 public class CategoryController {
     @Autowired
-    private CategoryService service;
+    private CategoryService categoryService;
 
     @GetMapping("/category")
     public ResponseEntity<List<Category>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.showAll());
     }
 
     @GetMapping("/category/{no}")
     public ResponseEntity<Category> show(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.show(no));
     }
 
     @PostMapping("/category")
     public ResponseEntity<Category> create(@RequestBody Category category) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(category));
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.create(category));
     }
 
     @PutMapping("/category")
     public ResponseEntity<Category> update(@RequestBody Category category) {
-        Category result = service.update(category);
+        Category result = categoryService.update(category);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -42,7 +42,7 @@ public class CategoryController {
 
     @DeleteMapping("/category/{no}")
     public ResponseEntity<Category> delete(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.delete(no));
     }
 
 

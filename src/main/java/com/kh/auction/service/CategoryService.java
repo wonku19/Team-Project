@@ -1,41 +1,49 @@
 package com.kh.auction.service;
 
+import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
+import com.kh.auction.repo.AuctionBoardDAO;
 import com.kh.auction.repo.CategoryDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class CategoryService {
+
+
     @Autowired
-    private CategoryDAO dao;
+    private CategoryDAO categoryDAO;
+    public List<Category> findByAuctionNo(int auctionNo){
+        return categoryDAO.findByAuctionNo(auctionNo);
+    }
 
     public List<Category> showAll() {
-        return dao.findAll();
+        return categoryDAO.findAll();
     }
 
     public Category show(int no) {
-        return dao.findById(no).orElse(null);
+        return categoryDAO.findById(no).orElse(null);
     }
 
     public Category create(Category category) {
-        return dao.save(category);
+        return categoryDAO.save(category);
     }
 
 
     public Category update(Category category) {
-        Category target = dao.findById(category.getCategoryNo()).orElse(null);
+        Category target = categoryDAO.findById(category.getCategoryNo()).orElse(null);
         if (target != null) {
-            return dao.save(category);
+            return categoryDAO.save(category);
         }
         return null;
     }
 
     public Category delete(int no) {
-        Category category = dao.findById(no).orElse(null);
-        dao.delete(category);
+        Category category = categoryDAO.findById(no).orElse(null);
+        categoryDAO.delete(category);
         return category;
     }
 

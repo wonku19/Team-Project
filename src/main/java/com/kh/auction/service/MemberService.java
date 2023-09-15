@@ -13,33 +13,33 @@ import java.util.List;
 public class MemberService {
 
     @Autowired
-    private MemberDAO dao;
+    private MemberDAO memberDAO;
 
     public List<Member> showAll() {
-        return dao.findAll();
+        return memberDAO.findAll();
     }
 
     public Member show(int no) {
-        return dao.findById(no).orElse(null);
+        return memberDAO.findById(no).orElse(null);
     }
 
     public Member create(Member member) {
-        return dao.save(member);
+        return memberDAO.save(member);
     }
 
 
     public Member update(Member member) {
-        Member target = dao.findById(member.getNo()).orElse(null);
+        Member target = memberDAO.findById(member.getNo()).orElse(null);
         if (target != null) {
-            return dao.save(member);
+            return memberDAO.save(member);
         }
         return null;
     }
 
 
     public Member delete(int no) {
-        Member target = dao.findById(no).orElse(null);
-        dao.delete(target);
+        Member target = memberDAO.findById(no).orElse(null);
+        memberDAO.delete(target);
         return target;
     }
 
