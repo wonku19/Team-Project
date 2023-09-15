@@ -12,28 +12,28 @@ import java.util.List;
 public class RepliesService {
 
     @Autowired
-    private RepliesDAO dao;
-    
+    private RepliesDAO repliesDAO;
+
     // 대댓글 등록
     public Replies create(Replies replies) {
-        return dao.save(replies);
+        return repliesDAO.save(replies);
     }
 
     // 대댓글 수정
     public Replies update(Replies replies) {
-        return dao.save(replies);
+        return repliesDAO.save(replies);
     }
 
     // 대댓글 삭제
     public Replies delete(int id) {
-        Replies data = dao.findById(id).orElse(null);
-        dao.delete(data);
+        Replies data = repliesDAO.findById(id).orElse(null);
+        repliesDAO.delete(data);
         return data;
     }
 
     // 댓글 1개의 대댓글 전체 조회
     public List<Comments> findByRepliesList(int id) {
-        return dao.findByRepliesList(id);
+        return repliesDAO.findByRepliesList(id);
     }
 
     // 대댓글 좋아요 등록
@@ -43,11 +43,11 @@ public class RepliesService {
 
 
     public List<Replies> showAll() {
-        return dao.findAll();
+        return repliesDAO.findAll();
     }
 
     public Replies show(int id) {
-        return dao.findById(id).orElse(null);
+        return repliesDAO.findById(id).orElse(null);
     }
 
 
