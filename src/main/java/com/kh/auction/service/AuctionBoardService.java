@@ -11,32 +11,32 @@ import java.util.List;
 public class AuctionBoardService {
 
     @Autowired
-    private AuctionBoardDAO dao;
+    private AuctionBoardDAO auctionBoardDAO;
 
     public List<AuctionBoard> showAll() {
-        return dao.findAll();
+        return auctionBoardDAO.findAll();
     }
 
     public AuctionBoard show(int no) {
-        return dao.findById(no).orElse(null);
+        return auctionBoardDAO.findById(no).orElse(null);
     }
 
     public AuctionBoard create(AuctionBoard auctionBoard) {
-        return dao.save(auctionBoard);
+        return auctionBoardDAO.save(auctionBoard);
     }
 
 
     public AuctionBoard update(AuctionBoard auctionBoard) {
-        AuctionBoard target = dao.findById(auctionBoard.getAuctionNo()).orElse(null);
+        AuctionBoard target = auctionBoardDAO.findById(auctionBoard.getAuctionNo()).orElse(null);
         if (target != null) {
-            return dao.save(auctionBoard);
+            return auctionBoardDAO.save(auctionBoard);
         }
         return null;
     }
 
     public AuctionBoard delete(int id) {
-        AuctionBoard category = dao.findById(id).orElse(null);
-        dao.delete(category);
+        AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
+        auctionBoardDAO.delete(category);
         return category;
     }
 }

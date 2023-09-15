@@ -13,26 +13,26 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class MemberController {
     @Autowired
-    private MemberService service;
+    private MemberService memberService;
 
     @GetMapping("/user")
     public ResponseEntity<List<Member>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.showAll());
     }
 
     @GetMapping("/user/{no}")
     public ResponseEntity<Member> show(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.show(no));
     }
 
     @PostMapping("/user")
     public ResponseEntity<Member> create(@RequestBody Member member) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(member));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.create(member));
     }
 
     @PutMapping("/user")
     public ResponseEntity<Member> update(@RequestBody Member member) {
-        Member result = service.update(member);
+        Member result = memberService.update(member);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -42,7 +42,7 @@ public class MemberController {
 
     @DeleteMapping("/user/{no}")
     public ResponseEntity<Member> delete(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(no));
     }
 
     
