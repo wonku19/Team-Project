@@ -65,5 +65,19 @@ public class AuctionBoardController {
     public ResponseEntity<List<Comments>> showComments(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(commentsService.boardCommentsList(no));
     }
-
+    // 경매 번호로 아이템 상세정보 조회
+    @GetMapping("/auction/itemDetails/{itemNo}")
+        public ResponseEntity<AuctionItemDetails> getItemDetailsByItemNo(@PathVariable int itemNo) {
+            AuctionItemDetails itemDetails = auctionItemDetailsService.getAuctionItemDetailsByItemNo(itemNo);
+            try{ 
+                 return ResponseEntity.status(HttpStatus.OK).body(itemDetails);
+            } ecatch (Exception e){
+                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+    // 경매 번호로 배송 정보 조회
+    @GetMapping("/auction/{auctionNo}")
+    public ResponseEntity<List<Delivery>> getDeliveryByAuctionNo(@PathVariable int auctionNo) {
+        List<Delivery> deliveries = deliveryService.getDeliveryByAuctionNo(auctionNo);
+        return ResponseEntity.status(HttpStatus.OK).body(deliveries);
+    }
 }

@@ -45,7 +45,11 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(no));
     }
 
-    
-
+    // 멤버 아이디로 배송정보 조회
+    @GetMapping("/member/{memberId}")
+    public ResponseEntity<List<Delivery>> getDeliveryByMemberId(@PathVariable String memberId) {
+        List<Delivery> deliveries = deliveryService.getDeliveryByMemberId(memberId);
+        return ResponseEntity.status(HttpStatus.OK).body(deliveries);
+    }
 
 }
