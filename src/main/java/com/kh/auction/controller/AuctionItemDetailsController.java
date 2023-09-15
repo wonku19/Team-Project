@@ -61,4 +61,12 @@ public class AuctionItemDetailsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+    @GetMapping("/auction/itemDetails/{itemNo}")
+    public ResponseEntity<AuctionItemDetails> getItemDetailsByItemNo(@PathVariable int itemNo) {
+        AuctionItemDetails itemDetails = auctionItemDetailsService.getAuctionItemDetailsByItemNo(itemNo);
+        try{ 
+            return ResponseEntity.status(HttpStatus.OK).body(itemDetails);
+        } ecatch (Exception e){
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
 }

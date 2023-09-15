@@ -40,4 +40,7 @@ public class AuctionItemDetailsService {
         detailsDAO.delete(data);
         return data;
     }
+    public List<AuctionItemDetails> getItemDetailsByAuctionNo(int auctionNo) {
+        return auctionItemDetailsDAO.findByAuctionNo(auctionNo);
+    }
 }
