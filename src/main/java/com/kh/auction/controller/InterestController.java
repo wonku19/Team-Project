@@ -14,20 +14,20 @@ import java.util.List;
 public class InterestController {
 
     @Autowired
-    private InterestService service;
+    private InterestService interestService;
 
 
     // 게시글 관심 등록 : POST - http://localhost:8080/api/auctionBoard/interest
     @PostMapping("/interest")
     public ResponseEntity<Interest> create(@PathVariable Interest interest) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(interest));
+        return ResponseEntity.status(HttpStatus.OK).body(interestService.create(interest));
     }
 
 
     // 게시글 관심 등록 취소 : DELETE - http://localhost:8080/api/auctionBoard/interest/{id}
     @DeleteMapping("/interest/{id}")
     public ResponseEntity<Interest> delete(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
+        return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(id));
     }
 
 
@@ -35,7 +35,7 @@ public class InterestController {
     // 자신이 관심 등록한 게시글 목록 조회 : GET - http://localhost:8080/api/auctionBoard/{id}/interest
     @GetMapping("/{id}/interest")
     public ResponseEntity<List<Interest>> showInterestList(@PathVariable String id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.findByMemberId(id));
+        return ResponseEntity.status(HttpStatus.OK).body(interestService.findByMemberId(id));
     }
 
 

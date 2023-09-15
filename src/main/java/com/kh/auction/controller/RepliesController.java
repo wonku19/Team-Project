@@ -15,18 +15,18 @@ import java.util.List;
 public class RepliesController {
 
     @Autowired
-    private RepliesService service;
+    private RepliesService repliesService;
 
     // 대댓글 등록 : POST - http://localhost:8080/api/auctionBoard/comments/replies
     @PostMapping("/comments/replies")
     public ResponseEntity<Replies> create(@PathVariable Replies replies) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(replies));
+        return ResponseEntity.status(HttpStatus.OK).body(repliesService.create(replies));
     }
 
     // 대댓글 수정 : PUT - http://localhost:8080/api/auctionBoard/comments/replies
     @PutMapping("/comments/replies")
     public ResponseEntity<Replies> update(@PathVariable Replies replies) {
-        Replies result = service.update(replies);
+        Replies result = repliesService.update(replies);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -36,13 +36,13 @@ public class RepliesController {
     // 대댓글 삭제 : DELETE - http://localhost:8080/api/auctionBoard/comments/replies/{id}
     @DeleteMapping("/comments/replies/{id}")
     public ResponseEntity<Replies> delete(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
+        return ResponseEntity.status(HttpStatus.OK).body(repliesService.delete(id));
     }
 
     // 댓글 1개에 따른 대댓글 전체 조회 : POST - http://localhost:8080/api/auctionBoard/comments/{id}/replies
     @GetMapping("/comments/{id}/replies")
     public ResponseEntity<List<Comments>> showRepliesList(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.findByRepliesList(id));
+        return ResponseEntity.status(HttpStatus.OK).body(repliesService.findByRepliesList(id));
     }
 
     // 대댓글 좋아요 등록 : POST - http://localhost:8080/api/auctionBoard/comments/replies/like
@@ -61,12 +61,12 @@ public class RepliesController {
 
     @GetMapping("/comments/replies")
     public ResponseEntity<List<Replies>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+        return ResponseEntity.status(HttpStatus.OK).body(repliesService.showAll());
     }
 
     @GetMapping("/comments/replies/{id}")
     public ResponseEntity<Replies> show(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
+        return ResponseEntity.status(HttpStatus.OK).body(repliesService.show(id));
     }
 
     
