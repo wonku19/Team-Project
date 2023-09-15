@@ -1,7 +1,10 @@
 package com.kh.auction.controller;
 
 import com.kh.auction.domain.AuctionBoard;
+import com.kh.auction.domain.Category;
+import com.kh.auction.domain.Comments;
 import com.kh.auction.service.AuctionBoardService;
+import com.kh.auction.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,8 @@ public class AuctionBoardController {
     @Autowired
     private AuctionBoardService service;
 
+    @Autowired
+    private CategoryService category;
     @GetMapping("/auction")
     public ResponseEntity<List<AuctionBoard>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
@@ -44,4 +49,13 @@ public class AuctionBoardController {
     public ResponseEntity<AuctionBoard> delete(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
     }
+    // 카테고리
+    @GetMapping("/auction/{auctionNo}")
+    public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
+        return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
+    }
+
+
+
+    
 }

@@ -21,8 +21,8 @@ public class AuctionBoardService {
         return dao.findById(no).orElse(null);
     }
 
-    public AuctionBoard create(AuctionBoard category) {
-        return dao.save(category);
+    public AuctionBoard create(AuctionBoard auctionBoard) {
+        return dao.save(auctionBoard);
     }
 
 
@@ -34,8 +34,8 @@ public class AuctionBoardService {
         return null;
     }
 
-    public AuctionBoard delete(int no) {
-        AuctionBoard category = dao.findById(no).orElse(null);
+    public AuctionBoard delete(int id) {
+        AuctionBoard category = dao.findById(id).orElse(null);
         dao.delete(category);
         return category;
     }

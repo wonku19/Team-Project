@@ -18,10 +18,7 @@ public class CommentsController {
 
 
     // 게시글 1개에 따른 댓글 전체 조회 : GET - http://localhost:8080/api/auctionBoard/{id}/comments
-    @GetMapping("/{id}/comments")
-    public ResponseEntity<List<Comments>> showBoardCommentList(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.boardCommentsList(no));
-    }
+
 
     // 댓글 추가 : POST - http://localhost:8080/api/auctionBoard/comments
     @PostMapping("/comments")

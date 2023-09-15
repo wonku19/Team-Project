@@ -1,16 +1,24 @@
 package com.kh.auction.service;
 
+import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
+import com.kh.auction.repo.AuctionBoardDAO;
 import com.kh.auction.repo.CategoryDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+
 @Service
 public class CategoryService {
+
+
     @Autowired
     private CategoryDAO dao;
+    public List<Category> findByAuctionNo(int auctionNo){
+        return dao.findByAuctionNo(auctionNo);
+    }
 
     public List<Category> showAll() {
         return dao.findAll();
