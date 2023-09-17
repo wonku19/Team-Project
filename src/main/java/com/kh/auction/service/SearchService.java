@@ -11,32 +11,32 @@ import java.util.List;
 public class SearchService {
 
     @Autowired
-    private SearchDAO dao;
+    private SearchDAO searchDAO;
 
     public List<Search> showAll() {
-        return dao.findAll();
+        return searchDAO.findAll();
     }
 
     public Search show(int searchSeq) {
-        return dao.findById(searchSeq).orElse(null);
+        return searchDAO.findById(searchSeq).orElse(null);
     }
 
     public Search create(Search search) {
-        return dao.save(search);
+        return searchDAO.save(search);
     }
 
     public Search update(Search search) {
-        Search target = dao.findById(search.getSearchSeq()).orElse(null);
+        Search target = searchDAO.findById(search.getSearchSeq()).orElse(null);
         if (target != null) {
-            return dao.save(search);
+            return searchDAO.save(search);
         }
         return null;
     }
 
     public Search delete(int searchSeq) {
-        Search target = dao.findById(searchSeq).orElse(null);
+        Search target = searchDAO.findById(searchSeq).orElse(null);
         if(target != null) {
-            dao.delete(target);
+            searchDAO.delete(target);
             return target;
         }
         return null;

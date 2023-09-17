@@ -18,32 +18,32 @@ import java.util.List;
 public class AuctionBoardController {
 
     @Autowired
-    private AuctionBoardService service;
+    private AuctionBoardService auctionBoardService;
 
     @Autowired
     private CommentsService commentsService;
 
     @Autowired
-    private CategoryService category;
+    private CategoryService categoryService;
 
     @GetMapping("/auction")
     public ResponseEntity<List<AuctionBoard>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.showAll());
     }
 
     @GetMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
     }
 
     @PostMapping("/auction")
     public ResponseEntity<AuctionBoard> create(@RequestBody AuctionBoard auctionBoard) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(auctionBoard));
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(auctionBoard));
     }
 
     @PutMapping("/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
-        AuctionBoard result = service.update(auctionBoard);
+        AuctionBoard result = auctionBoardService.update(auctionBoard);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -52,12 +52,12 @@ public class AuctionBoardController {
 
     @DeleteMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> delete(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.delete(no));
     }
     // 카테고리
     @GetMapping("/auction/{auctionNo}/category")
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
-        return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findByAuctionNo(auctionNo));
     }
 
     // 특정 경매 게시글에 달린 댓글들 조회

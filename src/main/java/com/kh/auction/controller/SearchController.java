@@ -14,26 +14,26 @@ import java.util.List;
 public class SearchController {
 
     @Autowired
-    private SearchService service;
+    private SearchService searchService;
 
     @GetMapping("/search")
     public ResponseEntity<List<Search>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+        return ResponseEntity.status(HttpStatus.OK).body(searchService.showAll());
     }
 
     @GetMapping("/search/{searchSeq}")
     public ResponseEntity<Search> show(@PathVariable int searchSeq) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(searchSeq));
+        return ResponseEntity.status(HttpStatus.OK).body(searchService.show(searchSeq));
     }
 
     @PostMapping("/search")
     public ResponseEntity<Search> create(@RequestBody Search search) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(search));
+        return ResponseEntity.status(HttpStatus.OK).body(searchService.create(search));
     }
 
     @PutMapping("/search")
     public ResponseEntity<Search> update(@RequestBody Search search) {
-        Search result = service.update(search);
+        Search result = searchService.update(search);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -42,6 +42,6 @@ public class SearchController {
 
     @DeleteMapping("/search/{searchSeq}")
     public ResponseEntity<Search> delete(@PathVariable int searchSeq) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(searchSeq));
+        return ResponseEntity.status(HttpStatus.OK).body(searchService.delete(searchSeq));
     }
 }
