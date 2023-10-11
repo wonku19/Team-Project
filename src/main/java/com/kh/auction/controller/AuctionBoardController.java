@@ -36,7 +36,7 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
     }
 
-    @PostMapping("/auction")
+    @PostMapping("/user/auction")
     public ResponseEntity<AuctionBoard> create(@RequestBody AuctionBoard auctionBoard) {
         return ResponseEntity.status(HttpStatus.OK).body(service.create(auctionBoard));
     }

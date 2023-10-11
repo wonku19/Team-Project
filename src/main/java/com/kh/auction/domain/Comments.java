@@ -21,7 +21,7 @@ public class Comments {
     @SequenceGenerator(name = "commentSequence", sequenceName = "SEQ_COMMENTS", allocationSize = 1)
     private int commentId;
 
-
+    @Column(name="comment_content")
     private String content;
 
     @Column(name = "comment_date")
