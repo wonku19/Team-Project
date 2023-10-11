@@ -16,7 +16,7 @@ public class AuctionBoard {
     @Id
     @Column(name = "auction_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "auctionNoSeq")
-    @SequenceGenerator(name = "auctionNoSeq", sequenceName = "AUCTION_NO_SEQ", allocationSize = 1)
+    @SequenceGenerator(name = "auctionNoSeq", sequenceName = "SEQ_AUCTION", allocationSize = 1)
     private int auctionNo;
 
     @Column(name = "auction_title")
@@ -35,14 +35,9 @@ public class AuctionBoard {
     private int auctionEMoney; // 경매 최소 입찰가
     @Column(name = "auction_gmoney")
     private int auctionGMoney; // 경매 즉시 구매가
-    @Column(name = "auction_now_buy")
+    @Column(name = "auction_nowbuy_y_n")
     private char auctionNowbuy; // 경매 즉시 구매 여부
     @Column(name = "auction_end_date")
     private Date auctionEndDate;
-
-    @ManyToOne //  Channel 엔티티와 Member 엔티티를 다대일 관계로 설정
-    @JoinColumn(name = "member_no") // 외래키 생성 or Member 엔티티의 기본키와 매핑
-    private Member member;
-
 
 }

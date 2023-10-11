@@ -4,6 +4,7 @@ package com.kh.auction.service;
 import com.kh.auction.domain.Member;
 import com.kh.auction.repo.MemberDAO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,17 +20,23 @@ public class MemberService {
         return memberDAO.findAll();
     }
 
-    public Member show(int no) {
-        return memberDAO.findById(no).orElse(null);
+    public Member show(String id) {
+        return memberDAO.findById(id).orElse(null);
     }
 
     public Member create(Member member) {
         return memberDAO.save(member);
     }
 
+    public Member duplicate(String id) {
+        Member target = memberDAO.findById(id).orElse(null);
+        return target;
+
+    }
+
 
     public Member update(Member member) {
-        Member target = memberDAO.findById(member.getNo()).orElse(null);
+        Member target = memberDAO.findById(member.getId()).orElse(null);
         if (target != null) {
             return memberDAO.save(member);
         }
@@ -37,10 +44,17 @@ public class MemberService {
     }
 
 
-    public Member delete(int no) {
-        Member target = memberDAO.findById(no).orElse(null);
+    public Member delete(String id) {
+        Member target = memberDAO.findById(id).orElse(null);
         memberDAO.delete(target);
         return target;
     }
 
+    public Member getByCredentials(String id, String password, PasswordEncoder encoder) {
+        Member member = memberDAO.findById(id).orElse(null);
+        if (member != null && encoder.matches(password, member.getPassword())) {
+            return member;
+        }
+        return null;
+    }
 }
