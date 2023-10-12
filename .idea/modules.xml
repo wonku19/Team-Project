@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auction.iml" filepath="$PROJECT_DIR$/.idea/modules/auction.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/auction.main.iml" filepath="$PROJECT_DIR$/.idea/modules/auction.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auction.querydsl.iml" filepath="$PROJECT_DIR$/.idea/modules/auction.querydsl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/auction.test.iml" filepath="$PROJECT_DIR$/.idea/modules/auction.test.iml" />
     </modules>
   </component>
 </project>
