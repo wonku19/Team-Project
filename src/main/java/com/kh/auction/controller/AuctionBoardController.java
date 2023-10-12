@@ -46,9 +46,7 @@ public class AuctionBoardController {
 
     @PostMapping("/auction/post")
     public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name="image", required = false) MultipartFile image, String title, String itemName, String dece, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
-
         AuctionBoard vo = new AuctionBoard();
-
         try {
             // 이미지 업로드 처리
             // 이미지의 실제 파일 이름

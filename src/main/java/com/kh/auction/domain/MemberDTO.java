@@ -15,6 +15,8 @@ import java.util.Date;
 @AllArgsConstructor
 public class MemberDTO {
 
+    private String token;
+
     private String id;
 
     private String password;
