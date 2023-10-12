@@ -14,12 +14,12 @@ import java.util.List;
 public class AuctionItemDetailsController {
 
     @Autowired
-    private AuctionItemDetailsService auctionItemDetailsService;
+    private AuctionItemDetailsService service;
 
     @GetMapping("/auctionItemDetails")
     public ResponseEntity<List<AuctionItemDetails>> showAll() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(auctionItemDetailsService.showAll());
+            return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -28,7 +28,7 @@ public class AuctionItemDetailsController {
     @GetMapping("/auctionItemDetails/{id}")
     public ResponseEntity<AuctionItemDetails> show(@PathVariable int id){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(auctionItemDetailsService.show(id));
+            return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -37,7 +37,7 @@ public class AuctionItemDetailsController {
     @PostMapping("/auctionItemDetails")
     public ResponseEntity<AuctionItemDetails> create(@RequestBody AuctionItemDetails auctionItemDetails) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(auctionItemDetailsService.create(auctionItemDetails));
+            return ResponseEntity.status(HttpStatus.OK).body(service.create(auctionItemDetails));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -47,7 +47,7 @@ public class AuctionItemDetailsController {
     @PutMapping("/auctionItemDetails")
     public ResponseEntity<AuctionItemDetails> update(@RequestBody AuctionItemDetails auctionItemDetails){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(auctionItemDetailsService.update(auctionItemDetails));
+            return ResponseEntity.status(HttpStatus.OK).body(service.update(auctionItemDetails));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -56,7 +56,7 @@ public class AuctionItemDetailsController {
     @DeleteMapping("/auctionItemDetails/{id}")
     public ResponseEntity<AuctionItemDetails> delete(@PathVariable int id){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(auctionItemDetailsService.delete(id));
+            return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }

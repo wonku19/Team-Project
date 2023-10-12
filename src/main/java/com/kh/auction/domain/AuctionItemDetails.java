@@ -29,7 +29,7 @@ public class AuctionItemDetails{
     @Column(name="item_img")
     private String itemImg;
 
-    @ManyToOne
-    @JoinColumn(name="auction_no")
-    private AuctionBoard auctionNo;
+//    @ManyToOne
+//    @JoinColumn(name="auction_no")
+//    private AuctionBoard auctionNo;
 }

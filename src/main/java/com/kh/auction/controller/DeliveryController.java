@@ -14,12 +14,12 @@ import java.util.List;
 public class DeliveryController {
 
     @Autowired
-    private DeliverySerivce deliverySerivce;
+    private DeliverySerivce service;
 
     @GetMapping("/Delivery")
     public ResponseEntity<List<Delivery>> showAll() {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(deliverySerivce.showAll());
+            return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -28,7 +28,7 @@ public class DeliveryController {
     @GetMapping("/Delivery/{id}")
     public ResponseEntity<Delivery> show(@PathVariable int id){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(deliverySerivce.show(id));
+            return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -37,7 +37,7 @@ public class DeliveryController {
     @PostMapping("/Delivery")
     public ResponseEntity<Delivery> create(@RequestBody Delivery delivery) {
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(deliverySerivce.create(delivery));
+            return ResponseEntity.status(HttpStatus.OK).body(service.create(delivery));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -47,7 +47,7 @@ public class DeliveryController {
     @PutMapping("/Delivery")
     public ResponseEntity<Delivery> update(@RequestBody Delivery delivery){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(deliverySerivce.update(delivery));
+            return ResponseEntity.status(HttpStatus.OK).body(service.update(delivery));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -56,7 +56,7 @@ public class DeliveryController {
     @DeleteMapping("/Delivery/{id}")
     public ResponseEntity<Delivery> delete(@PathVariable int id){
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(deliverySerivce.delete(id));
+            return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
