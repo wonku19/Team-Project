@@ -1,5 +1,6 @@
 package com.kh.auction.domain;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,6 +15,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberDTO {
+
+    private String token;
 
     private String id;
 

@@ -44,7 +44,7 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
     }
 
-    @PostMapping("/auction/post")
+    @PostMapping("/user/post")
     public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name="image", required = false) MultipartFile image, String title, String itemName, String dece, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
 
         AuctionBoard vo = new AuctionBoard();
@@ -71,6 +71,7 @@ public class AuctionBoardController {
             vo.setAuctionEMoney(eMoney);
             vo.setAuctionNowbuy(nowBuy);
             vo.setAuctionGMoney(gMoney);
+            vo.setAuctionImg(uuid + "_" + realImage);
 
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));

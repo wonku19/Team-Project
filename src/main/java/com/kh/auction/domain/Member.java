@@ -18,7 +18,7 @@ import java.util.Date;
 public class Member {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "member_id")
     private String id;
     @Column(name = "member_pwd")
     private String password;

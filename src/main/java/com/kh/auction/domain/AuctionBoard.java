@@ -27,6 +27,7 @@ public class AuctionBoard {
     private Date auctionDate;
     @Column(name = "item_name")
     private String itemName;
+
     @Column(name = "item_desc")
     private String itemDesc;
     @Column(name = "current_price")
