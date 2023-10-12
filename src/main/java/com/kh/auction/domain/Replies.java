@@ -16,26 +16,27 @@ import java.util.Date;
 public class Replies {
 
     @Id
-    @Column(name = "reply_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "repliesSequence")
-    @SequenceGenerator(name = "repliesSequence", sequenceName = "SEQ_REPLIES", allocationSize = 1)
+    @Column(name = "reply_no")
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "replySequence")
+    @SequenceGenerator(name = "replySequence", sequenceName = "SEQ_REPLY", allocationSize = 1)
     private int replyNo;
 
-    private String content;
+    @Column(name = "reply_content")
+    private  String replyContent;
 
     @Column(name = "reply_date")
     private Date replyDate;
 
-    // 외래키
-
-    // Member -> id
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Member id;
+    @JoinColumn(name="auction_no")
+    private AuctionBoard auctionNo;
 
-    // Comments -> commentId
     @ManyToOne
-    @JoinColumn(name = "comment_id")
-    private Comments commentId;
+    @JoinColumn(name="member_id")
+    private Member memberId;
+
+    @ManyToOne
+    @JoinColumn(name="comment_no")
+    private Comments commentNo;
 
 }

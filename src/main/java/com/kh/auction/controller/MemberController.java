@@ -42,7 +42,7 @@ public class MemberController {
 
     @PostMapping("/user/create")
     public ResponseEntity create(@RequestBody MemberDTO dto) {
-            Member vo = new Member();
+        Member vo = new Member();
         Member member = Member.builder()
                 .id(dto.getId())
                 .password(passwordEncoder.encode(dto.getPassword()))
@@ -64,17 +64,18 @@ public class MemberController {
                 .phone(registerMember.getPhone())
                 .sphone(registerMember.getSphone())
                 .build();
-            return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
 
+    // 아이디 중복
     @PostMapping("/user/duplicate")
     public ResponseEntity<Map<String, Boolean>> duplicate(@RequestParam(name = "id") String id) {
         try {
             boolean isDuplicate = memberService.duplicate(id) != null;
             log.info(id + (isDuplicate ? " 있는 아이디 입니다" : " 사용 가능한 아이디 입니다"));
 
-            Map<String, Boolean> response = new HashMap<>();
+            Map<String, Boolean> response = new HashMap<>(); // 혹은 boolean 클래스 만들어서 객체지향성 높이기
             response.put("isDuplicate", isDuplicate);
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -104,9 +105,13 @@ public class MemberController {
                     .nick(member.getNick())
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
+                    .token(token)
                     .build();
+            return ResponseEntity.ok().body(responseDTO);
+        }else {
+            return ResponseEntity.badRequest().build();
         }
-        return null;
+
 
     }
 

@@ -27,14 +27,12 @@ public class Delivery {
     @Column(name = "complete_date")
     private Date completeDate;
 
+    @ManyToOne
+    @JoinColumn(name="auction_no")
+    private AuctionBoard auctionNo;
 
-//    @ManyToOne
-//    @JoinColumn(name="auction_no")
-//    private AuctionBoard auctionNo;
-//
-//
-//    @ManyToOne
-//    @JoinColumn(name="MEMBER_NO")
-//    private Member memberId;
-//}
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member memberId;
+
 }

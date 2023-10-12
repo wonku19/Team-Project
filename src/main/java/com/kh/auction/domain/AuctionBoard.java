@@ -15,8 +15,8 @@ public class AuctionBoard {
 
     @Id
     @Column(name = "auction_no")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "auctionNoSeq")
-    @SequenceGenerator(name = "auctionNoSeq", sequenceName = "SEQ_AUCTION", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auctionSeq") // GenerationType을 SEQUENCE로 변경
+    @SequenceGenerator(name = "auctionSeq", sequenceName = "SEQ_AUCTION", allocationSize = 1) // sequenceName을 "AUCTION_NO_SEQ"로 변경
     private int auctionNo;
 
     @Column(name = "auction_title")
@@ -27,10 +27,13 @@ public class AuctionBoard {
     private Date auctionDate;
     @Column(name = "item_name")
     private String itemName;
+
     @Column(name = "item_desc")
     private String itemDesc;
     @Column(name = "current_price")
     private int currentPrice;
+    @Column(name = "auction_smoney")
+    private int auctionSMoney; // 경매 시작가
     @Column(name = "auction_emoney")
     private int auctionEMoney; // 경매 최소 입찰가
     @Column(name = "auction_gmoney")
@@ -39,5 +42,13 @@ public class AuctionBoard {
     private char auctionNowbuy; // 경매 즉시 구매 여부
     @Column(name = "auction_end_date")
     private Date auctionEndDate;
+
+    @ManyToOne
+    @JoinColumn(name="category_no")
+    private Category category;
+
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member memberId;
 
 }
