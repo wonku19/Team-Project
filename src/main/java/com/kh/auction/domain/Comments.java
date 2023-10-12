@@ -16,10 +16,10 @@ import java.util.Date;
 public class Comments {
 
     @Id
-    @Column(name = "comment_id")
+    @Column(name = "comment_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "commentSequence")
-    @SequenceGenerator(name = "commentSequence", sequenceName = "SEQ_COMMENTS", allocationSize = 1)
-    private int commentId;
+    @SequenceGenerator(name = "commentSequence", sequenceName = "SEQ_COMMENT", allocationSize = 1)
+    private int commentNo;
 
     @Column(name="comment_content")
     private String content;
@@ -27,15 +27,12 @@ public class Comments {
     @Column(name = "comment_date")
     private Date commentDate;
 
-    // 외래키
-    // Member -> id
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Member id;
-
-    // Auction -> auction
-    @ManyToOne
-    @JoinColumn(name = "auction_no")
+    @JoinColumn(name="auction_no")
     private AuctionBoard auctionNo;
+
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member memberId;
 
 }

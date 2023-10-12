@@ -25,7 +25,6 @@ public class AuctionBoardService {
         return auctionBoardDAO.save(auctionBoard);
     }
 
-
     public AuctionBoard update(AuctionBoard auctionBoard) {
         AuctionBoard target = auctionBoardDAO.findById(auctionBoard.getAuctionNo()).orElse(null);
         if (target != null) {
