@@ -50,7 +50,7 @@ public class QComments extends EntityPathBase<Comments> {
 
     public QComments(Class<? extends Comments> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo"), inits.get("auctionNo")) : null;
+        this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo")) : null;
         this.id = inits.isInitialized("id") ? new QMember(forProperty("id")) : null;
     }
 

@@ -23,6 +23,7 @@ public class CommentsController {
     // 댓글 추가 : POST - http://localhost:8080/api/auctionBoard/comments
     @PostMapping("/comments")
     public ResponseEntity<Comments> create(@RequestBody Comments comments) {
+
         return ResponseEntity.status(HttpStatus.OK).body(service.create(comments));
     }
 

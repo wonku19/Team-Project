@@ -46,7 +46,7 @@ public class QInterest extends EntityPathBase<Interest> {
 
     public QInterest(Class<? extends Interest> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo"), inits.get("auctionNo")) : null;
+        this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo")) : null;
         this.id = inits.isInitialized("id") ? new QMember(forProperty("id")) : null;
     }
 
