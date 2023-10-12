@@ -18,7 +18,7 @@ import java.util.Date;
 public class Member {
 
     @Id
-    @Column(name = "member_id")
+    @Column(name = "id")
     private String id;
     @Column(name = "member_pwd")
     private String password;
@@ -26,8 +26,8 @@ public class Member {
     private String nick;
     @Column(name = "member_name")
     private String name;
-    @Column(name = "member_gender")
-    private char gender;
+    @Column(name = "member_birthday")
+    private int birthday;
     @Column(name = "member_phone")
     private String phone; // 회원 전화번호
     @Column(name = "member_sphone")

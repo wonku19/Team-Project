@@ -39,12 +39,4 @@ public class DeliverySerivce {
         deliveryDAO.delete(data);
         return data;
     }
-
-    public List<Delivery> showAuctionNo(int auctionNo) {
-        return deliveryDAO.findByAuctionNo(auctionNo);
-    }
-
-    public List<Delivery> showByMemberId(String memberId) {
-        return deliveryDAO.findByMemberId(memberId);
-    }
 }

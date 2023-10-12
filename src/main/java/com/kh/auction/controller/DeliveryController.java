@@ -61,15 +61,4 @@ public class DeliveryController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-    @GetMapping("/auction/{auctionNo}")
-    public ResponseEntity<List<Delivery>> getDeliveryByAuctionNo(@PathVariable int auctionNo) {
-        List<Delivery> deliveries = deliveryService.getDeliveryByAuctionNo(auctionNo);
-        return ResponseEntity.status(HttpStatus.OK).body(deliveries);
-    }
-
-    @GetMapping("/member/{memberId}")
-    public ResponseEntity<List<Delivery>> getDeliveryByMemberId(@PathVariable String memberId) {
-        List<Delivery> deliveries = deliveryService.getDeliveryByMemberId(memberId);
-        return ResponseEntity.status(HttpStatus.OK).body(deliveries);
-    }
 }

@@ -34,7 +34,6 @@ public class MemberService {
 
     }
 
-
     public Member update(Member member) {
         Member target = memberDAO.findById(member.getId()).orElse(null);
         if (target != null) {

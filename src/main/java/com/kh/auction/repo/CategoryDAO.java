@@ -7,9 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CategoryDAO extends JpaRepository<Category, Integer> {
-
-    //번호에 따른 조회
-
-    @Query(value="SELECT * FROM AUCTION_ITEM_DETAILS WHERE AUCTION_NO = :auction_no", nativeQuery = true)
-    List<AuctionItemDetails> findByAuctionNo(int auction_no);
+    @Query(value="SELECT * FROM auction_board WHERE auction_no:auction_no",nativeQuery = true)
+    List<Category> findByAuctionNo (int auction_no);
 }

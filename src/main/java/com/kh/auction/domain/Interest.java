@@ -15,20 +15,16 @@ public class Interest {
 
     @Id
     @Column(name = "post_no")
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "postSequence")
-    @SequenceGenerator(name = "postSequence", sequenceName = "SEQ_POST", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "interestSequence")
+    @SequenceGenerator(name = "interestSequence", sequenceName = "SEQ_INTEREST", allocationSize = 1)
     private int postNo;
 
-    // 외래키
-    // Member -> id
     @ManyToOne
-    @JoinColumn(name = "id")
-    private Member id;
+    @JoinColumn(name="member_id")
+    private Member memberId;
 
-
-    // Auction -> auctionNo
     @ManyToOne
-    @JoinColumn(name = "auction_no")
+    @JoinColumn(name="auction_no")
     private AuctionBoard auctionNo;
 
 }
