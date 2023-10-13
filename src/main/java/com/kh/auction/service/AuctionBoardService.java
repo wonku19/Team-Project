@@ -1,6 +1,7 @@
 package com.kh.auction.service;
 
 import com.kh.auction.domain.AuctionBoard;
+import com.kh.auction.domain.Category;
 import com.kh.auction.repo.AuctionBoardDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,4 +39,9 @@ public class AuctionBoardService {
         auctionBoardDAO.delete(category);
         return category;
     }
+
+    public List<AuctionBoard> findByCategoryHot() {
+        return auctionBoardDAO.findByCategoryHot();
+    }
+
 }

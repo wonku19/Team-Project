@@ -22,7 +22,7 @@ public class QCategory extends EntityPathBase<Category> {
 
     public static final QCategory category = new QCategory("category");
 
-    public final QAuctionBoard auction;
+    public final QAuctionBoard auctionNo;
 
     public final StringPath categoryName = createString("categoryName");
 
@@ -46,7 +46,7 @@ public class QCategory extends EntityPathBase<Category> {
 
     public QCategory(Class<? extends Category> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.auction = inits.isInitialized("auction") ? new QAuctionBoard(forProperty("auction"), inits.get("auction")) : null;
+        this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo"), inits.get("auctionNo")) : null;
     }
 
 }

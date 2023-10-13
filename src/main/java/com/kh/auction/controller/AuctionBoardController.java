@@ -1,13 +1,17 @@
 package com.kh.auction.controller;
 
-import com.kh.auction.domain.AuctionBoard;
-import com.kh.auction.domain.Category;
-import com.kh.auction.domain.Comments;
-import com.kh.auction.domain.Member;
+import com.kh.auction.domain.*;
+import com.kh.auction.repo.CategoryDAO;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,30 +22,33 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/*")
+@CrossOrigin(origins={"*"}, maxAge = 6000)
 public class AuctionBoardController {
 
     @Autowired
-    private AuctionBoardService service;
+    private AuctionBoardService auctionBoardService;
 
     @Autowired
-    private CategoryService category;
+    private CategoryService categoryService;
 
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
     @GetMapping("/auction")
     public ResponseEntity<List<AuctionBoard>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.showAll());
     }
 
     @GetMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
     }
 
     @PostMapping("/user/post")
@@ -84,12 +91,12 @@ public class AuctionBoardController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(service.create(vo));
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
     }
 
     @PutMapping("/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
-        AuctionBoard result = service.update(auctionBoard);
+        AuctionBoard result = auctionBoardService.update(auctionBoard);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -98,15 +105,26 @@ public class AuctionBoardController {
 
     @DeleteMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> delete(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.delete(no));
     }
     // 카테고리
     @GetMapping("/auction/{auctionNo}")
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
-        return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findByAuctionNo(auctionNo));
     }
 
 
+
+    // Hot 게시글
+    @GetMapping("/public/auction/hot")
+    public ResponseEntity<List<AuctionBoard>> hotList() {
+        List<AuctionBoard> hotItems = auctionBoardService.findByCategoryHot();
+
+        // 만약 항목이 8개 이상이면 처음 8개만 유지, 그렇지 않으면 모든 항목 반환
+        hotItems = hotItems.size() > 8 ? hotItems.subList(0, 8) : hotItems;
+
+        return ResponseEntity.status(HttpStatus.OK).body(hotItems);
+    }
 
 
 }

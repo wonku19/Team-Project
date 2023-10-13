@@ -24,7 +24,7 @@ public class QInterest extends EntityPathBase<Interest> {
 
     public final QAuctionBoard auctionNo;
 
-    public final QMember id;
+    public final QMember memberId;
 
     public final NumberPath<Integer> postNo = createNumber("postNo", Integer.class);
 
@@ -47,7 +47,7 @@ public class QInterest extends EntityPathBase<Interest> {
     public QInterest(Class<? extends Interest> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo"), inits.get("auctionNo")) : null;
-        this.id = inits.isInitialized("id") ? new QMember(forProperty("id")) : null;
+        this.memberId = inits.isInitialized("memberId") ? new QMember(forProperty("memberId")) : null;
     }
 
 }

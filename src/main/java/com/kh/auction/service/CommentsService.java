@@ -11,37 +11,37 @@ import java.util.List;
 public class CommentsService {
 
     @Autowired
-    private CommentsDAO dao;
+    private CommentsDAO commentsDAO;
 
     // 게시글 1개에 따른 댓글 전체 조회
     public List<Comments> boardCommentsList(int no) {
-        Comments target = dao.findById(no).orElse(null);
+        Comments target = commentsDAO.findById(no).orElse(null);
         if (target != null) {
-            return dao.findByBoardComments(no);
+            return commentsDAO.findByBoardComments(no);
         }
         return null;
     }
 
 
     public List<Comments> showAll() {
-        return dao.findAll();
+        return commentsDAO.findAll();
     }
 
     public Comments show(int id) {
-        return dao.findById(id).orElse(null);
+        return commentsDAO.findById(id).orElse(null);
     }
 
     public Comments create(Comments comments) {
-        return dao.save(comments);
+        return commentsDAO.save(comments);
     }
 
     public Comments update(Comments comments) {
-        return dao.save(comments);
+        return commentsDAO.save(comments);
     }
 
     public Comments delete(int id) {
-        Comments data = dao.findById(id).orElse(null);
-        dao.delete(data);
+        Comments data = commentsDAO.findById(id).orElse(null);
+        commentsDAO.delete(data);
         return data;
     }
 
