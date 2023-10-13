@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface AuctionBoardDAO extends JpaRepository<AuctionBoard, Integer> {
 
-    @Query(value = "SELECT * FROM auction_board ORDER BY auction_check_no DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM auction_board", nativeQuery = true)
     List<AuctionBoard> findByCategoryHot();
 
 }
