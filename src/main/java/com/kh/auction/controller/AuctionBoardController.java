@@ -1,13 +1,17 @@
 package com.kh.auction.controller;
 
-import com.kh.auction.domain.AuctionBoard;
-import com.kh.auction.domain.Category;
-import com.kh.auction.domain.Comments;
-import com.kh.auction.domain.Member;
+import com.kh.auction.domain.*;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,8 +25,10 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/*")
+@CrossOrigin(origins={"*"}, maxAge = 6000)
 public class AuctionBoardController {
 
     @Autowired
@@ -34,9 +40,45 @@ public class AuctionBoardController {
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-    @GetMapping("/auction")
-    public ResponseEntity<List<AuctionBoard>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+
+    @GetMapping("/public/auction")
+    public ResponseEntity<List<AuctionBoard>> BoardList(@RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="category", required = false) Integer category) {
+        Sort sort = Sort.by("auctionNo").descending();
+
+        // 한 페이지의 10개
+        Pageable pageable = PageRequest.of(page-1, 5, sort);
+
+        // 동적 쿼리를 위한 QuerlDSL을 사용한 코드들 추가
+
+        // 1. Q도메인 클래스를 가져와야 한다.
+        QAuctionBoard AuctionBoard = QAuctionBoard.auctionBoard;
+
+
+
+        // 2. BooleanBuilder는 where문에 들어가는 조건들을 넣어주는 컨테이너
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if(category!=null) {
+            // 3. 원하는 조건은 필드값과 같이 결합해서 생성한다.
+            BooleanExpression expression = QAuctionBoard.auctionBoard.category.categoryNo.eq(category);
+//            BooleanExpression expression =
+
+            // 4. 만들어진 조건은 where문에 and나 or 같은 키워드와 결합한다.
+            builder.and(expression);
+
+        }
+
+        Page<AuctionBoard> result = service.showAll(pageable, builder);
+
+        //log.info("Total Pages : " + result.getTotalPages()); // 총 몇 페이지
+        //log.info("Total Count : " + result.getTotalElements()); // 전체 개수
+        //log.info("Page Number : " + result.getNumber()); // 현재 페이지 번호
+        //log.info("Page Size : " + result.getSize()); // 페이지당 데이터 개수
+        //log.info("Next Page : " + result.hasNext()); // 다음 페이지가 있는지 존재 여부
+        //log.info("First Page : " + result.isFirst()); // 시작 페이지 여부
+
+        //return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
     }
 
     @GetMapping("/auction/{no}")

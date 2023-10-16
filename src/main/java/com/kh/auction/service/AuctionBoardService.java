@@ -2,7 +2,10 @@ package com.kh.auction.service;
 
 import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.repo.AuctionBoardDAO;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,8 +16,9 @@ public class AuctionBoardService {
     @Autowired
     private AuctionBoardDAO auctionBoardDAO;
 
-    public List<AuctionBoard> showAll() {
-        return auctionBoardDAO.findAll();
+    public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
+//        return auctionBoardDAO.findAll(builder, pageable);
+        return auctionBoardDAO.findAll(builder, pageable);
     }
 
     public AuctionBoard show(int no) {
@@ -37,5 +41,8 @@ public class AuctionBoardService {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
         auctionBoardDAO.delete(category);
         return category;
+    }
+    public List<AuctionBoard> findByChannelCode(int code) {
+        return auctionBoardDAO.findByCategoryNo(code);
     }
 }
