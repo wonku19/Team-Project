@@ -9,6 +9,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -115,39 +116,21 @@ public class AuctionBoardController {
 
     // Hot 게시글
     @GetMapping("/public/auction/hot")
-    public ResponseEntity<List<AuctionBoard>> hotList(@RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="category", required = false) Integer checkNo) {
-        // 정렬
-        Sort sort = Sort.by("videoCode").descending();
+    public ResponseEntity<List<AuctionBoard>> videoList() {
 
-        // 한 페이지의 10개
-        Pageable pageable = PageRequest.of(1, 20, sort);
+        // 정렬
+        Sort sort = Sort.by(Sort.Order.desc("auctionAttendNo"));
 
         // 동적 쿼리를 위한 QuerlDSL을 사용한 코드들 추가
-
         // 1. Q도메인 클래스를 가져와야 한다.
         QAuctionBoard qAuctionBoard = QAuctionBoard.auctionBoard;
 
         // 2. BooleanBuilder는 where문에 들어가는 조건들을 넣어주는 컨테이너
         BooleanBuilder builder = new BooleanBuilder();
 
-        if(checkNo!=null) {
-            // 3. 원하는 조건은 필드값과 같이 결합해서 생성한다.
-            BooleanExpression expression = qAuctionBoard.auctionCheckNo.eq(checkNo);
+        // 결과를 8개로 제한
+        List<AuctionBoard> result = auctionBoardService.findByHot(8, sort);
 
-            // 4. 만들어진 조건은 where문에 and나 or 같은 키워드와 결합한다.
-            builder.and(expression);
-        }
-
-        Page<AuctionBoard> result = auctionBoardService.showAll(pageable, builder);
-
-        //log.info("Total Pages : " + result.getTotalPages()); // 총 몇 페이지
-        //log.info("Total Count : " + result.getTotalElements()); // 전체 개수
-        //log.info("Page Number : " + result.getNumber()); // 현재 페이지 번호
-        //log.info("Page Size : " + result.getSize()); // 페이지당 데이터 개수
-        //log.info("Next Page : " + result.hasNext()); // 다음 페이지가 있는지 존재 여부
-        //log.info("First Page : " + result.isFirst()); // 시작 페이지 여부
-
-        //return ResponseEntity.status(HttpStatus.OK).build();
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 

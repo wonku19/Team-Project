@@ -3,9 +3,14 @@ package com.kh.auction.service;
 import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
 import com.kh.auction.repo.AuctionBoardDAO;
+import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
 import java.util.List;
 
 @Service
@@ -40,8 +45,12 @@ public class AuctionBoardService {
         return category;
     }
 
-    public List<AuctionBoard> findByCategoryHot() {
-        return auctionBoardDAO.findByCategoryHot();
+    public List<AuctionBoard> findByHot(int no, Sort sort) {
+        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findByHotList(sort);
+        if (allAuctionBoards.size() > no) {
+            return allAuctionBoards.subList(0, no);
+        }
+        return allAuctionBoards;
     }
 
 }

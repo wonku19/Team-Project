@@ -72,7 +72,7 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public QAuctionBoard(Class<? extends AuctionBoard> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.category = inits.isInitialized("category") ? new QCategory(forProperty("category"), inits.get("category")) : null;
+        this.category = inits.isInitialized("category") ? new QCategory(forProperty("category")) : null;
         this.memberId = inits.isInitialized("memberId") ? new QMember(forProperty("memberId")) : null;
     }
 
