@@ -11,11 +11,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/*")
+@CrossOrigin(origins={"*"}, maxAge = 6000)
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping("/category")
+    @GetMapping("/public/category")
     public ResponseEntity<List<Category>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.showAll());
     }

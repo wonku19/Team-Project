@@ -19,8 +19,4 @@ public class Category {
 
     @Column(name = "category_name")
     private String categoryName;
-
-    @ManyToOne
-    @JoinColumn(name="auction_no")
-    private AuctionBoard auctionNo;
 }
