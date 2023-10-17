@@ -1,14 +1,25 @@
 package com.kh.auction.service;
 
 import com.kh.auction.domain.AuctionBoard;
+import com.kh.auction.domain.Category;
 import com.kh.auction.repo.AuctionBoardDAO;
+import com.querydsl.core.BooleanBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Pageable;
+import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AuctionBoardService {
+
+
 
     @Autowired
     private AuctionBoardDAO auctionBoardDAO;
@@ -38,4 +49,33 @@ public class AuctionBoardService {
         auctionBoardDAO.delete(category);
         return category;
     }
+
+
+    // Hot 게시글
+    public List<AuctionBoard> findByHot(int no) {
+        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findByHotList();
+
+        // 정렬
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionAttendNo).reversed());
+
+        if (allAuctionBoards.size() > no) {
+            return allAuctionBoards.subList(0, no);
+        }
+        return allAuctionBoards;
+    }
+
+    // New 게시글
+    public List<AuctionBoard> findByNew(int no) {
+        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
+        log.info(""+ auctionBoardDAO.findAll());
+        log.info(""+allAuctionBoards);
+        // 정렬
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionDate));
+
+        if (allAuctionBoards.size() > no) {
+            return allAuctionBoards.subList(0, no);
+        }
+        return allAuctionBoards;
+    }
+
 }

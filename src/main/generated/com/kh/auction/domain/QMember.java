@@ -23,17 +23,15 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Integer> authority = createNumber("authority", Integer.class);
 
-    public final StringPath email = createString("email");
+    public final NumberPath<Integer> birthday = createNumber("birthday", Integer.class);
 
-    public final ComparablePath<Character> gender = createComparable("gender", Character.class);
+    public final StringPath email = createString("email");
 
     public final StringPath id = createString("id");
 
     public final StringPath name = createString("name");
 
     public final StringPath nick = createString("nick");
-
-    public final NumberPath<Integer> no = createNumber("no", Integer.class);
 
     public final StringPath password = createString("password");
 
