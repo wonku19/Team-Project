@@ -17,12 +17,10 @@ import java.util.List;
 
 @Slf4j
 @Service
+@Slf4j
 public class AuctionBoardService {
 
 
-
-    @Autowired
-    private AuctionBoardDAO auctionBoardDAO;
 
     public List<AuctionBoard> showAll() {
         return auctionBoardDAO.findAll();
@@ -43,7 +41,6 @@ public class AuctionBoardService {
         }
         return null;
     }
-
     public AuctionBoard delete(int id) {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
         auctionBoardDAO.delete(category);
@@ -51,31 +48,5 @@ public class AuctionBoardService {
     }
 
 
-    // Hot 게시글
-    public List<AuctionBoard> findByHot(int no) {
-        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findByHotList();
-
-        // 정렬
-        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionAttendNo).reversed());
-
-        if (allAuctionBoards.size() > no) {
-            return allAuctionBoards.subList(0, no);
-        }
-        return allAuctionBoards;
-    }
-
-    // New 게시글
-    public List<AuctionBoard> findByNew(int no) {
-        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
-        log.info(""+ auctionBoardDAO.findAll());
-        log.info(""+allAuctionBoards);
-        // 정렬
-        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionDate));
-
-        if (allAuctionBoards.size() > no) {
-            return allAuctionBoards.subList(0, no);
-        }
-        return allAuctionBoards;
-    }
 
 }

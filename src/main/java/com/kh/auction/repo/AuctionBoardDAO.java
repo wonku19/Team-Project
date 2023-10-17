@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface AuctionBoardDAO extends JpaRepository<AuctionBoard, Integer> {
+import java.util.List;
+
+public interface AuctionBoardDAO extends JpaRepository<AuctionBoard, Integer>, QuerydslPredicateExecutor<AuctionBoard> {
 
     @Query(value = "SELECT * FROM auction_board", nativeQuery = true)
     List<AuctionBoard> findByHotList();
