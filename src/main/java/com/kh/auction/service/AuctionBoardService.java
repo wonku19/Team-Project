@@ -22,8 +22,9 @@ public class AuctionBoardService {
 
 
 
-    public List<AuctionBoard> showAll() {
-        return auctionBoardDAO.findAll();
+    public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
+//        return auctionBoardDAO.findAll(builder, pageable);
+        return auctionBoardDAO.findAll(builder, pageable);
     }
 
     public AuctionBoard show(int no) {
@@ -46,7 +47,7 @@ public class AuctionBoardService {
         auctionBoardDAO.delete(category);
         return category;
     }
-
-
-
+    public List<AuctionBoard> findByChannelCode(int code) {
+        return auctionBoardDAO.findByCategoryNo(code);
+    }
 }

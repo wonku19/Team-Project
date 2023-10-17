@@ -24,7 +24,7 @@ public class CategoryController {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.showAll());
     }
 
-    @GetMapping("/category/{no}")
+    @GetMapping("/public/category/{no}")
     public ResponseEntity<Category> show(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.show(no));
     }
