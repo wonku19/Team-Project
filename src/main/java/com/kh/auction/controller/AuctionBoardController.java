@@ -9,6 +9,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +44,7 @@ public class AuctionBoardController {
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-    @GetMapping("/auction")
+    @GetMapping("/api/auction")
     public ResponseEntity<List<AuctionBoard>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.showAll());
     }
@@ -116,22 +118,33 @@ public class AuctionBoardController {
 
     // Hot 게시글
     @GetMapping("/public/auction/hot")
-    public ResponseEntity<List<AuctionBoard>> videoList() {
+    public ResponseEntity<List<AuctionBoard>> HotList() {
 
-        // 정렬
-        Sort sort = Sort.by(Sort.Order.desc("auctionAttendNo"));
+        try {
+            // 결과를 8개로 제한
+            List<AuctionBoard> result = auctionBoardService.findByHot(8);
+            log.info(""+result);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        // 동적 쿼리를 위한 QuerlDSL을 사용한 코드들 추가
-        // 1. Q도메인 클래스를 가져와야 한다.
-        QAuctionBoard qAuctionBoard = QAuctionBoard.auctionBoard;
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
 
-        // 2. BooleanBuilder는 where문에 들어가는 조건들을 넣어주는 컨테이너
-        BooleanBuilder builder = new BooleanBuilder();
+    // New 게시글
+    @GetMapping("/public/auction/New")
+    public ResponseEntity<List<AuctionBoard>> NewList() {
+        try {
+            // 결과를 8개로 제한
+            List<AuctionBoard> result = auctionBoardService.findByNew(8);
+            log.info(""+result);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
-        // 결과를 8개로 제한
-        List<AuctionBoard> result = auctionBoardService.findByHot(8, sort);
-
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
 
