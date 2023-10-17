@@ -6,6 +6,7 @@ import com.kh.auction.domain.Comments;
 import com.kh.auction.domain.Member;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/*")
 @CrossOrigin(origins={"*"}, maxAge = 6000)
@@ -54,7 +57,7 @@ public class AuctionBoardController {
             // 이미지 업로드 처리
             // 이미지의 실제 파일 이름
             String originalImage = image.getOriginalFilename();
-            String realImage = originalImage.substring(originalImage.lastIndexOf("\\")+1);
+            String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
 
             // UUID
             String uuid = UUID.randomUUID().toString();
@@ -78,15 +81,16 @@ public class AuctionBoardController {
             category.setCategoryNo(Integer.parseInt(categoryNo));
             vo.setCategory(category);
 
-            Member member = new Member();
-            member.setId(id); // @AuthenticationPrincipal String id 값 가져와서 넣기
-            vo.setMemberId(member);
+//            Member member = new Member();
+//            member.setId(id); // @AuthenticationPrincipal String id 값 가져와서 넣기
+//            vo.setMemberId(member);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return ResponseEntity.status(HttpStatus.OK).body(service.create(vo));
     }
+
 
     @PutMapping("/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
