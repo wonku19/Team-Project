@@ -22,7 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
@@ -42,7 +44,7 @@ public class AuctionBoardController {
 
 
     @GetMapping("/public/auction")
-    public ResponseEntity<List<AuctionBoard>> BoardList(@RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="category", required = false) Integer category) {
+    public ResponseEntity<Map<String, Object>> BoardList(@RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="category", required = false) Integer category) {
         Sort sort = Sort.by("auctionNo").descending();
 
         // 한 페이지의 10개
@@ -52,20 +54,17 @@ public class AuctionBoardController {
 
         // 1. Q도메인 클래스를 가져와야 한다.
         QAuctionBoard AuctionBoard = QAuctionBoard.auctionBoard;
-
-
-
         // 2. BooleanBuilder는 where문에 들어가는 조건들을 넣어주는 컨테이너
         BooleanBuilder builder = new BooleanBuilder();
-
+        log.info("카테고리"+category);
         if(category!=null) {
             // 3. 원하는 조건은 필드값과 같이 결합해서 생성한다.
-            BooleanExpression expression = QAuctionBoard.auctionBoard.category.categoryNo.eq(category);
+              BooleanExpression expression = QAuctionBoard.auctionBoard.category.categoryNo.eq(category);
 //            BooleanExpression expression =
 
             // 4. 만들어진 조건은 where문에 and나 or 같은 키워드와 결합한다.
             builder.and(expression);
-
+            log.info("불리언 빌더"+ builder.and(expression));
         }
 
         Page<AuctionBoard> result = service.showAll(pageable, builder);
@@ -78,7 +77,13 @@ public class AuctionBoardController {
         //log.info("First Page : " + result.isFirst()); // 시작 페이지 여부
 
         //return ResponseEntity.status(HttpStatus.OK).build();
-        return ResponseEntity.status(HttpStatus.OK).body(result.getContent());
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalPages", result.getTotalPages()); // 추가: 총 페이지 수
+        response.put("content", result.getContent());
+        log.info("리절트"+result.getContent());
+        log.info(""+result.getTotalPages());
+        log.info(""+ResponseEntity.status(HttpStatus.OK).body(response));
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/auction/{no}")

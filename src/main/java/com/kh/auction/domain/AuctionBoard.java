@@ -11,27 +11,27 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "AUCTION_BOARD")
 public class AuctionBoard {
 
     @Id
     @Column(name = "auction_no")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "auctionSeq") // GenerationType을 SEQUENCE로 변경
     @SequenceGenerator(name = "auctionSeq", sequenceName = "SEQ_AUCTION", allocationSize = 1) // sequenceName을 "AUCTION_NO_SEQ"로 변경
-    private int auctionNo;
+    private int auctionNo; // 경매 게시글 번호
 
     @Column(name = "auction_title")
-    private String auctionTitle;
+    private String auctionTitle; // 경매 게시글 제목
     @Column(name = "auction_img")
-    private String auctionImg;
+    private String auctionImg; // 경매 게시글에 등록된 이미지
     @Column(name = "auction_date")
-    private Date auctionDate;
+    private Date auctionDate; // 경매 등록일
     @Column(name = "item_name")
-    private String itemName;
-
+    private String itemName; // 상품 이름
     @Column(name = "item_desc")
-    private String itemDesc;
+    private String itemDesc; // 상품 설명
     @Column(name = "current_price")
-    private int currentPrice;
+    private int currentPrice; // 현재 가격
     @Column(name = "auction_smoney")
     private int auctionSMoney; // 경매 시작가
     @Column(name = "auction_emoney")
@@ -41,7 +41,9 @@ public class AuctionBoard {
     @Column(name = "auction_nowbuy_y_n")
     private char auctionNowbuy; // 경매 즉시 구매 여부
     @Column(name = "auction_end_date")
-    private Date auctionEndDate;
+    private Date auctionEndDate; // 경매 마감일 (경매 등록일 + 30일)
+    
+
 
     @ManyToOne
     @JoinColumn(name="category_no")
