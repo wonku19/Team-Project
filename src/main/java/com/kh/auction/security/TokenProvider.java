@@ -23,7 +23,7 @@ public class TokenProvider {
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY) // header에 들어갈 내용
                 .setSubject(member.getId()) // <-- 여기부터 payload에 들어갈 내용
-                .setIssuer("youtube app")
+                .setIssuer("teamp app")
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .compact();
