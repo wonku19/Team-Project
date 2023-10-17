@@ -17,14 +17,14 @@ import java.util.List;
 
 @Slf4j
 @Service
-@Slf4j
 public class AuctionBoardService {
 
-
+    @Autowired
+    private AuctionBoardDAO auctionBoardDAO;
 
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
 //        return auctionBoardDAO.findAll(builder, pageable);
-        return auctionBoardDAO.findAll(builder, pageable);
+        return null;
     }
 
     public AuctionBoard show(int no) {
@@ -49,5 +49,32 @@ public class AuctionBoardService {
     }
     public List<AuctionBoard> findByChannelCode(int code) {
         return auctionBoardDAO.findByCategoryNo(code);
+    }
+
+
+    // Hot 게시글
+    public List<AuctionBoard> findByHot(int no) {
+        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
+
+        // 정렬
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionAttendNo).reversed());
+
+        if (allAuctionBoards.size() > no) {
+            return allAuctionBoards.subList(0, no);
+        }
+        return allAuctionBoards;
+    }
+
+    // New 게시글
+    public List<AuctionBoard> findByNew(int no) {
+        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
+
+        // 정렬
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionDate).reversed());
+
+        if (allAuctionBoards.size() > no) {
+            return allAuctionBoards.subList(0, no);
+        }
+        return allAuctionBoards;
     }
 }
