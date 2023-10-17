@@ -27,7 +27,6 @@ public class AuctionBoard {
     private Date auctionDate;
     @Column(name = "item_name")
     private String itemName;
-
     @Column(name = "item_desc")
     private String itemDesc;
     @Column(name = "current_price")
@@ -42,6 +41,11 @@ public class AuctionBoard {
     private char auctionNowbuy; // 경매 즉시 구매 여부
     @Column(name = "auction_end_date")
     private Date auctionEndDate;
+//    @Column(name = "auction_check_no")
+//    private int auctionCheckNo;
+//    @Column(name = "auction_attend_no")
+//    private int auctionAttendNo;
+
 
     @ManyToOne
     @JoinColumn(name="category_no")
