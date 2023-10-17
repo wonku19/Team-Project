@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,7 +24,8 @@ public class AuctionBoard {
     @Column(name = "auction_title")
     private String auctionTitle; // 경매 게시글 제목
     @Column(name = "auction_img")
-    private String auctionImg; // 경매 게시글에 등록된 이미지
+//    @ElementCollection
+    private String auctionImg; // 경매 게시글에 등록된 이미지 목록
     @Column(name = "auction_date")
     private Date auctionDate; // 경매 등록일
     @Column(name = "item_name")
@@ -43,18 +45,12 @@ public class AuctionBoard {
     @Column(name = "auction_end_date")
     private Date auctionEndDate; // 경매 마감일 (경매 등록일 + 30일)
 
-    @Column(name = "auction_check_no")
-    private int auctionCheckNo; // 조회수
 
-    @Column(name = "auction_attend_no")
-    private int auctionAttendNo; // 입찰 참여 인원수
-
-
-    @Column(name = "auction_check_no")
-    private int auctionCheckNo; // 조회수
-
-    @Column(name = "auction_attend_no")
-    private int auctionAttendNo; // 입찰 참여 인원수
+//    @Column(name = "auction_check_no")
+//    private int auctionCheckNo; // 조회수
+//
+//    @Column(name = "auction_attend_no")
+//    private int auctionAttendNo; // 입찰 참여 인원수
 
 
 
