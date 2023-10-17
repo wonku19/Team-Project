@@ -42,7 +42,7 @@ public class AuctionBoard {
     private char auctionNowbuy; // 경매 즉시 구매 여부
     @Column(name = "auction_end_date")
     private Date auctionEndDate; // 경매 마감일 (경매 등록일 + 30일)
-    
+
 
 
     @ManyToOne
