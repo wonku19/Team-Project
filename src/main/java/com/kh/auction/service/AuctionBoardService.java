@@ -16,18 +16,13 @@ import java.util.List;
 @Slf4j
 public class AuctionBoardService {
 
-    public static void main(String[] args) {
-        AuctionBoardService service = new AuctionBoardService();
-
-    }
     @Autowired
     private AuctionBoardDAO auctionBoardDAO;
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
-//        return auctionBoardDAO.findAll(builder, pageable);
         return auctionBoardDAO.findAll(builder, pageable);
     }
-    public List<AuctionBoard> showAll() {
-        return auctionBoardDAO.findAll();
+    public Page<AuctionBoard> showAll(Pageable pageable) {
+        return auctionBoardDAO.findAll(pageable);
     }
 
     public AuctionBoard show(int no) {
@@ -45,6 +40,12 @@ public class AuctionBoardService {
         }
         return null;
     }
+
+    public Page<AuctionBoard> Search(String keyword, Pageable pageable){
+        return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
+    }
+
+
     public AuctionBoard delete(int id) {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
         auctionBoardDAO.delete(category);

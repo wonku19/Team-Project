@@ -6,6 +6,7 @@ import com.kh.auction.service.CategoryService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/api/*")
+@CrossOrigin(origins={"*"}, maxAge = 6000)
 public class AuctionBoardController {
 
     @Autowired
@@ -41,17 +43,58 @@ public class AuctionBoardController {
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-    @GetMapping("/auction")
-    public ResponseEntity<List<AuctionBoard>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+//    @GetMapping("/auction")
+//    public ResponseEntity<List<AuctionBoard>> showAll() {
+//        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
+//    }
+
+    @PostMapping("/public/search")
+    public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
+
+        // @RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="keyword",required = false) String keyword
+
+        log.info("request : " + request);
+
+        int page = request.getPage();
+        String keyword = request.getKeyword();
+
+        log.info("keyword :: " + keyword);
+
+        // required = false 를 주지 않았을땐 오류 났음
+        Sort sort = Sort.by("auctionNo").descending();
+        Pageable pageable = PageRequest.of(page-1,20,sort);
+        Page<AuctionBoard> list = null;
+        log.info("키워드 :: "+keyword);
+    if(keyword == null){
+        list = service.showAll(pageable);
+    }else{
+        list = service.Search(keyword, pageable);
     }
+        log.info(""+list.getContent());
+        AuctionBoardDTO dto = new AuctionBoardDTO();
+        dto.setContent(list.getContent());
+        dto.setTotalElements(list.getTotalElements());
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+//        return ResponseEntity.status(HttpStatus.OK).build();
+
+
+//    }
 
     @GetMapping("/public/auction")
-    public ResponseEntity<Map<String, Object>> BoardList(@RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="category", required = false) Integer category) {
+    public ResponseEntity<Map<String, Object>> BoardList(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "category", required = false) Integer category,
+            @RequestParam(name = "sortBy", required = false) String sortBy
+    ) {
         Sort sort = Sort.by("auctionNo").descending();
 
+        if ("biddingCount".equals(sortBy)) {
+            sort = Sort.by(Sort.Direction.DESC, "AUCTION_CHECK_NO");
+        }
+
         // 한 페이지의 10개
-        Pageable pageable = PageRequest.of(page-1, 5, sort);
+        Pageable pageable = PageRequest.of(page-1, 4, sort);
 
         // 동적 쿼리를 위한 QuerlDSL을 사용한 코드들 추가
 
@@ -83,7 +126,6 @@ public class AuctionBoardController {
         Map<String, Object> response = new HashMap<>();
         response.put("totalPages", result.getTotalPages()); // 추가: 총 페이지 수
         response.put("content", result.getContent());
-        log.info("asd", result.getContent());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

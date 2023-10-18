@@ -97,7 +97,7 @@ public class MemberController {
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
         if(member!=null){
-//            String token = tokenProvider.create(member);
+            String token = tokenProvider.create(member);
             MemberDTO responseDTO = MemberDTO.builder()
                     .id(member.getId())
                     .name(member.getName())
@@ -105,10 +105,12 @@ public class MemberController {
                     .nick(member.getNick())
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
-//                    .token(token)
+                    .token(token)
                     .build();
+            log.info(""+    responseDTO);
             return ResponseEntity.ok().body(responseDTO);
         }else {
+            log.info("로그인 실패");
             return ResponseEntity.badRequest().build();
         }
 
