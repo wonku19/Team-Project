@@ -4,6 +4,7 @@ import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
 import com.kh.auction.repo.AuctionBoardDAO;
 import com.kh.auction.repo.CategoryDAO;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,12 @@ public class CategoryService {
 
     @Autowired
     private CategoryDAO categoryDAO;
+
+//    @Autowired(required = true)
+//    private JPAQueryFactory queryFactory;
+
+//    private final QVideoComment qVideoComment = QVideoComment.videoComment;
+
     public List<Category> findByAuctionNo(int auctionNo){
         return categoryDAO.findByAuctionNo(auctionNo);
     }
@@ -46,6 +53,8 @@ public class CategoryService {
         categoryDAO.delete(category);
         return category;
     }
+
+
 
 
 }

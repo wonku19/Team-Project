@@ -20,6 +20,7 @@ public class CategoryController {
 
     @GetMapping("/public/category")
     public ResponseEntity<List<Category>> showAll() {
+        log.info("category : ");
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.showAll());
     }
 

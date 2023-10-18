@@ -3,16 +3,13 @@ package com.kh.auction.controller;
 import com.kh.auction.domain.Member;
 //import com.kh.auction.domain.MemberDTO;
 import com.kh.auction.domain.MemberDTO;
-import com.kh.auction.security.TokenProvider;
 import com.kh.auction.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -24,8 +21,8 @@ import java.util.Map;
 @RequestMapping("/api/*")
 @CrossOrigin(origins={"*"}, maxAge = 6000)
 public class MemberController {
-    @Autowired
-    private TokenProvider tokenProvider;
+//    @Autowired
+//    private TokenProvider tokenProvider;
 
     @Autowired
     private MemberService memberService;
@@ -97,7 +94,7 @@ public class MemberController {
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
         if(member!=null){
-            String token = tokenProvider.create(member);
+//            String token = tokenProvider.create(member);
             MemberDTO responseDTO = MemberDTO.builder()
                     .id(member.getId())
                     .name(member.getName())
@@ -105,7 +102,7 @@ public class MemberController {
                     .nick(member.getNick())
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
-                    .token(token)
+//                    .token(token)
                     .build();
             return ResponseEntity.ok().body(responseDTO);
         }else {
