@@ -22,10 +22,6 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public static final QAuctionBoard auctionBoard = new QAuctionBoard("auctionBoard");
 
-    public final NumberPath<Integer> auctionAttendNo = createNumber("auctionAttendNo", Integer.class);
-
-    public final NumberPath<Integer> auctionCheckNo = createNumber("auctionCheckNo", Integer.class);
-
     public final DateTimePath<java.util.Date> auctionDate = createDateTime("auctionDate", java.util.Date.class);
 
     public final NumberPath<Integer> auctionEMoney = createNumber("auctionEMoney", Integer.class);
@@ -52,7 +48,7 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public final StringPath itemName = createString("itemName");
 
-    public final QMember memberId;
+    public final StringPath memberId = createString("memberId");
 
     public QAuctionBoard(String variable) {
         this(AuctionBoard.class, forVariable(variable), INITS);
@@ -73,7 +69,6 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
     public QAuctionBoard(Class<? extends AuctionBoard> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.category = inits.isInitialized("category") ? new QCategory(forProperty("category")) : null;
-        this.memberId = inits.isInitialized("memberId") ? new QMember(forProperty("memberId")) : null;
     }
 
 }
