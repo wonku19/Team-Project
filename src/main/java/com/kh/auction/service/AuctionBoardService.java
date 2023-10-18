@@ -12,9 +12,11 @@ public class AuctionBoardService {
 
     @Autowired
     private AuctionBoardDAO auctionBoardDAO;
-
-    public List<AuctionBoard> showAll() {
-        return auctionBoardDAO.findAll();
+    public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
+        return auctionBoardDAO.findAll(builder, pageable);
+    }
+    public Page<AuctionBoard> showAll(Pageable pageable) {
+        return auctionBoardDAO.findAll(pageable);
     }
 
     public AuctionBoard show(int no) {
@@ -32,6 +34,11 @@ public class AuctionBoardService {
         }
         return null;
     }
+
+    public Page<AuctionBoard> Search(String keyword, Pageable pageable){
+        return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
+    }
+
 
     public AuctionBoard delete(int id) {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
