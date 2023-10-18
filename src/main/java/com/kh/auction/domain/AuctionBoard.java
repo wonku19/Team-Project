@@ -45,12 +45,11 @@ public class AuctionBoard {
     @Column(name = "auction_end_date")
     private Date auctionEndDate; // 경매 마감일 (경매 등록일 + 30일)
 
+    @Column(name = "auction_check_no")
+    private int auctionCheckNo; // 조회수
+    @Column(name = "auction_attend_no")
+    private int auctionAttendNo; // 입찰 참여 인원수
 
-//    @Column(name = "auction_check_no")
-//    private int auctionCheckNo; // 조회수
-//
-//    @Column(name = "auction_attend_no")
-//    private int auctionAttendNo; // 입찰 참여 인원수
 
 
 

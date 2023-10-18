@@ -1,9 +1,6 @@
 package com.kh.auction.controller;
 
-import com.kh.auction.domain.AuctionBoard;
-import com.kh.auction.domain.Category;
-import com.kh.auction.domain.Comments;
-import com.kh.auction.domain.Member;
+import com.kh.auction.domain.*;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -28,22 +25,62 @@ import java.util.*;
 public class AuctionBoardController {
 
     @Autowired
-    private AuctionBoardService auctionBoardService;
+    private AuctionBoardService service;
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryService category;
 
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-    @GetMapping("/auction")
-    public ResponseEntity<List<AuctionBoard>> showAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.showAll());
+
+    @GetMapping("/public/auction")
+    public ResponseEntity<Map<String, Object>> BoardList(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "category", required = false) Integer category,
+            @RequestParam(name = "sortOption", defaultValue = "1") int sortOption
+    ) {
+        // 정렬 방식에 따라 Sort 객체 생성
+        Sort sort = getSortForOption(sortOption);
+
+        Pageable pageable = PageRequest.of(page - 1, 3, sort);
+
+        QAuctionBoard AuctionBoard = QAuctionBoard.auctionBoard;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (category != null) {
+            BooleanExpression expression = QAuctionBoard.auctionBoard.category.categoryNo.eq(category);
+            builder.and(expression);
+        }
+
+        Page<AuctionBoard> result = service.showAll(pageable, builder);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalPages", result.getTotalPages());
+        response.put("content", result.getContent());
+        log.info(""+ result.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @GetMapping("/public/auction/{no}")
+    private Sort getSortForOption(int sortOption) {
+        switch (sortOption) {
+            case 1:
+                return Sort.by("auctionAttendNo").descending(); // 입찰 횟수 내림차순
+            case 2:
+                return Sort.by("auctionCheckNo").descending(); // 조회수 내림차순
+            case 3:
+                return Sort.by("auctionNo").ascending(); // 등록순
+            case 4:
+                return Sort.by("currentPrice").ascending(); // 낮은 가격순
+            case 5:
+                return Sort.by("currentPrice").descending(); // 높은 가격순
+            default:
+                return Sort.by("auctionNo").descending(); // 기본값: 경매 번호 내림차순
+        }
+    }
+    @GetMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
+        return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
     }
 
     @PostMapping("/public/post")
@@ -105,7 +142,7 @@ public class AuctionBoardController {
 
     @PutMapping("/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
-        AuctionBoard result = auctionBoardService.update(auctionBoard);
+        AuctionBoard result = service.update(auctionBoard);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -114,12 +151,12 @@ public class AuctionBoardController {
 
     @DeleteMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> delete(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.delete(no));
+        return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
     }
     // 카테고리
     @GetMapping("/auction/{auctionNo}")
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findByAuctionNo(auctionNo));
+        return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
     }
 
 }
