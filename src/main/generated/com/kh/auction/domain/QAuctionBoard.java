@@ -22,9 +22,9 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public static final QAuctionBoard auctionBoard = new QAuctionBoard("auctionBoard");
 
-    public final NumberPath<Integer> auctionAttendNo = createNumber("auctionAttendNo", Integer.class);
+    public final DateTimePath<java.util.Date> auctionAttendNo = createDateTime("auctionAttendNo", java.util.Date.class);
 
-    public final NumberPath<Integer> auctionCheckNo = createNumber("auctionCheckNo", Integer.class);
+    public final DateTimePath<java.util.Date> auctionCheckNo = createDateTime("auctionCheckNo", java.util.Date.class);
 
     public final DateTimePath<java.util.Date> auctionDate = createDateTime("auctionDate", java.util.Date.class);
 

@@ -5,7 +5,9 @@ import com.kh.auction.repo.AuctionBoardDAO;
 import com.querydsl.core.BooleanBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +19,9 @@ public class AuctionBoardService {
     private AuctionBoardDAO auctionBoardDAO;
 
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
-//        return auctionBoardDAO.findAll(builder, pageable);
         return auctionBoardDAO.findAll(builder, pageable);
     }
+
 
     public AuctionBoard show(int no) {
         return auctionBoardDAO.findById(no).orElse(null);
@@ -42,7 +44,10 @@ public class AuctionBoardService {
         auctionBoardDAO.delete(category);
         return category;
     }
-    public List<AuctionBoard> findByChannelCode(int code) {
+    public List<AuctionBoard> findByCategoryNo(int code) {
         return auctionBoardDAO.findByCategoryNo(code);
+    }
+    public List<AuctionBoard> getAuctionBoardsOrderByAttendNoDesc() {
+        return auctionBoardDAO.findAllOrderByAuctionAttendNoDesc();
     }
 }
