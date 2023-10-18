@@ -137,6 +137,7 @@ public class AuctionBoardController {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
             calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+//            calendar.add(Calendar.SECOND, 5); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
 
         } catch (IOException e) {

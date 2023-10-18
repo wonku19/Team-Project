@@ -25,7 +25,7 @@ public class AuctionBoard {
     @Column(name = "auction_img")
     private String auctionImg; // 경매 게시글에 등록된 이미지
     @Column(name = "auction_date")
-    private Date auctionDate; // 경매 등록일
+    private Date auctionDate; // 경매 등록일a
     @Column(name = "item_name")
     private String itemName; // 상품 이름
     @Column(name = "item_desc")
