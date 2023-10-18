@@ -57,9 +57,12 @@ public class AuctionBoard {
     @ManyToOne
     @JoinColumn(name="category_no")
     private Category category;
+//
+//    @ManyToOne
+//    @JoinColumn(name="member_id")
+//    private Member memberId;
 
-    @ManyToOne
-    @JoinColumn(name="member_id")
-    private Member memberId;
+    @Column(name="member_id")
+    private String memberId;
 
 }

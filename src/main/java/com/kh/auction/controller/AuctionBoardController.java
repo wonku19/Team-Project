@@ -41,95 +41,67 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.showAll());
     }
 
-    @GetMapping("/auction/{no}")
+    @GetMapping("/public/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
     }
 
-    @PostMapping("/user/post")
-    public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name="image", required = false) MultipartFile[] image, String title, String itemName, String dece, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
+    @PostMapping("/public/post")
+    public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
+        AuctionBoard vo = new AuctionBoard();
+
+        // 이미지 경로를 저장할 변수
+        StringBuilder imagePaths = new StringBuilder();
+
         try {
+            // 각 이미지 처리
+            for (MultipartFile image : images) {
+                String originalImage = image.getOriginalFilename();
+                String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
+                String uuid = UUID.randomUUID().toString();
+                String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
+                Path pathImage = Paths.get(saveImage);
 
-            for (MultipartFile file : image) {
-                if (!file.isEmpty()) {
-                    AuctionBoard vo = new AuctionBoard();
+                // 이미지를 서버에 저장
+                image.transferTo(pathImage);
 
-                    String originalImage = file.getOriginalFilename();
-                    String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
-                    String uuid = UUID.randomUUID().toString();
-                    String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
-                    Path pathImage = Paths.get(saveImage);
-                    file.transferTo(pathImage);
-                    vo.setAuctionImg(uuid + "_" + realImage);
-
-                    vo.setAuctionTitle(title);
-                    vo.setItemName(itemName);
-                    vo.setItemDesc(dece);
-                    vo.setAuctionSMoney(sMoney);
-                    vo.setAuctionEMoney(eMoney);
-                    vo.setAuctionGMoney(gMoney);
-                    vo.setAuctionNowbuy(nowBuy);
-
-                    vo.setAuctionDate(new Date());
-
-                    Category category = new Category();
-                    category.setCategoryNo(Integer.parseInt(categoryNo));
-                    vo.setCategory(category);
-
-                    Member member = new Member();
-                    member.setId(id);
-                    vo.setMemberId(member);
-
-                    return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
-                }
+                // 이미지 경로를 imagePaths에 추가
+                imagePaths.append(uuid).append("_").append(realImage).append(",");
             }
+
+            // 마지막 쉼표 제거
+            if (imagePaths.length() > 0) {
+                imagePaths.deleteCharAt(imagePaths.length() - 1);
+            }
+
+            // 나머지 필드 설정
+            vo.setAuctionTitle(title);
+            vo.setItemName(itemName);
+            vo.setItemDesc(desc);
+            vo.setAuctionSMoney(sMoney);
+            vo.setAuctionEMoney(eMoney);
+            vo.setAuctionNowbuy(nowBuy);
+            vo.setAuctionGMoney(gMoney);
+            vo.setAuctionImg(imagePaths.toString());
+
+            Category category = new Category();
+            category.setCategoryNo(Integer.parseInt(categoryNo));
+            vo.setCategory(category);
+
+            vo.setAuctionDate(new Date());
+
+            // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(vo.getAuctionDate());
+            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+            vo.setAuctionEndDate(calendar.getTime());
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return ResponseEntity.badRequest().build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
     }
-
-//    @PostMapping("/public/post")
-//    public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name="image", required = false) MultipartFile image, String title, String itemName, String dece, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
-//
-//        AuctionBoard vo = new AuctionBoard();
-//
-//        try {
-//            // 이미지 업로드 처리
-//            // 이미지의 실제 파일 이름
-//            String originalImage = image.getOriginalFilename();
-//            String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
-//
-//            // UUID
-//            String uuid = UUID.randomUUID().toString();
-//
-//            // 실제로 저장할 파일 명 (위치 포함)
-//            String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
-//            Path pathImage = Paths.get(saveImage);
-//
-//            image.transferTo(pathImage);
-//
-//            vo.setAuctionTitle(title);
-//            vo.setItemName(itemName);
-//            vo.setItemDesc(dece);
-//            vo.setAuctionSMoney(sMoney);
-//            vo.setAuctionEMoney(eMoney);
-//            vo.setAuctionNowbuy(nowBuy);
-//            vo.setAuctionGMoney(gMoney);
-//            vo.setAuctionImg(uuid + "_" + realImage);
-//
-//            Category category = new Category();
-//            category.setCategoryNo(Integer.parseInt(categoryNo));
-//            vo.setCategory(category);
-//
-//            vo.setAuctionDate(new Date());
-//
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
-//    }
-
 
     @PutMapping("/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
