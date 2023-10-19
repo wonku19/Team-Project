@@ -47,6 +47,8 @@ public class AuctionBoardController {
 //        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
 //    }
 
+    
+
     @PostMapping("/public/search")
     public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
 
