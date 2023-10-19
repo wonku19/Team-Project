@@ -26,6 +26,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -133,11 +137,8 @@ public class AuctionBoardController {
     @PostMapping("/public/post")
     public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
         AuctionBoard vo = new AuctionBoard();
-
-        // 이미지 경로를 저장할 변수
-        StringBuilder imagePaths = new StringBuilder();
-
         try {
+
             // 각 이미지 처리
             for (MultipartFile image : images) {
                 String originalImage = image.getOriginalFilename();
@@ -145,28 +146,29 @@ public class AuctionBoardController {
                 String uuid = UUID.randomUUID().toString();
                 String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
                 Path pathImage = Paths.get(saveImage);
+                
+            // 이미지 업로드 처리
+            // 이미지의 실제 파일 이름
+            String originalImage = image.getOriginalFilename();
+            String realImage = originalImage.substring(originalImage.lastIndexOf("\\")+1);
 
-                // 이미지를 서버에 저장
-                image.transferTo(pathImage);
+            // UUID
+            String uuid = UUID.randomUUID().toString();
 
-                // 이미지 경로를 imagePaths에 추가
-                imagePaths.append(uuid).append("_").append(realImage).append(",");
-            }
+            // 실제로 저장할 파일 명 (위치 포함)
+            String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
+            Path pathImage = Paths.get(saveImage);
 
-            // 마지막 쉼표 제거
-            if (imagePaths.length() > 0) {
-                imagePaths.deleteCharAt(imagePaths.length() - 1);
-            }
+            image.transferTo(pathImage);
 
-            // 나머지 필드 설정
             vo.setAuctionTitle(title);
             vo.setItemName(itemName);
-            vo.setItemDesc(desc);
+            vo.setItemDesc(dece);
             vo.setAuctionSMoney(sMoney);
             vo.setAuctionEMoney(eMoney);
             vo.setAuctionNowbuy(nowBuy);
             vo.setAuctionGMoney(gMoney);
-            vo.setAuctionImg(imagePaths.toString());
+            vo.setAuctionImg(uuid + "_" + realImage);
 
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
@@ -180,6 +182,9 @@ public class AuctionBoardController {
 //            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
             calendar.add(Calendar.MINUTE, 481); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
+            Member member = new Member();
+            member.setId(id); // @AuthenticationPrincipal String id 값 가져와서 넣기
+            vo.setMemberId(member);
 
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -22,6 +21,7 @@ public class AuctionBoardService {
 
     @Autowired
     private AuctionBoardDAO auctionBoardDAO;
+
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
         return auctionBoardDAO.findAll(builder, pageable);
     }
@@ -29,6 +29,7 @@ public class AuctionBoardService {
     public Page<AuctionBoard> showAll(Pageable pageable) {
         return auctionBoardDAO.findAll(pageable);
     }
+
     public AuctionBoard show(int no) {
         return auctionBoardDAO.findById(no).orElse(null);
     }
@@ -44,11 +45,6 @@ public class AuctionBoardService {
         }
         return null;
     }
-
-    public Page<AuctionBoard> Search(String keyword, Pageable pageable){
-        return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
-    }
-
 
     public AuctionBoard delete(int id) {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
