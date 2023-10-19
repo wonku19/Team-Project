@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import java.awt.print.Pageable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -26,11 +25,10 @@ public class AuctionBoardService {
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
         return auctionBoardDAO.findAll(builder, pageable);
     }
+
     public Page<AuctionBoard> showAll(Pageable pageable) {
         return auctionBoardDAO.findAll(pageable);
     }
-
-
     public AuctionBoard show(int no) {
         return auctionBoardDAO.findById(no).orElse(null);
     }

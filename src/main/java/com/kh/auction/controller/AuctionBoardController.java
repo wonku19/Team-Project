@@ -3,14 +3,11 @@ package com.kh.auction.controller;
 import com.kh.auction.domain.*;
 import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
-import com.kh.auction.domain.Comments;
-import com.kh.auction.domain.Member;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -141,19 +138,6 @@ public class AuctionBoardController {
         StringBuilder imagePaths = new StringBuilder();
 
         try {
-            // 이미지 업로드 처리
-            // 이미지의 실제 파일 이름
-            String originalImage = image.getOriginalFilename();
-            String realImage = originalImage.substring(originalImage.lastIndexOf("\\")+1);
-
-            // UUID
-            String uuid = UUID.randomUUID().toString();
-
-            // 실제로 저장할 파일 명 (위치 포함)
-            String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
-            Path pathImage = Paths.get(saveImage);
-
-            image.transferTo(pathImage);
             // 각 이미지 처리
             for (MultipartFile image : images) {
                 String originalImage = image.getOriginalFilename();
@@ -201,13 +185,12 @@ public class AuctionBoardController {
             throw new RuntimeException(e);
         }
 
-
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
     }
 
     @PutMapping("/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
-        AuctionBoard result = service.update(auctionBoard);
+        AuctionBoard result = auctionBoardService.update(auctionBoard);
         if (result != null) {
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }
@@ -216,7 +199,7 @@ public class AuctionBoardController {
 
     @DeleteMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> delete(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(no));
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.delete(no));
     }
     // 카테고리
     @GetMapping("/auction/{auctionNo}")
