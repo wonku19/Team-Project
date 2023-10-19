@@ -1,6 +1,8 @@
 package com.kh.auction.repo;
 
 import com.kh.auction.domain.AuctionBoard;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -14,4 +16,5 @@ public interface AuctionBoardDAO extends JpaRepository<AuctionBoard, Integer>, Q
     @Query("SELECT a FROM AuctionBoard a ORDER BY a.auctionAttendNo DESC")
     List<AuctionBoard> findAllOrderByAuctionAttendNoDesc();
 
+    Page<AuctionBoard> findByAuctionTitleContaining(String keyword, Pageable pageable);
 }
