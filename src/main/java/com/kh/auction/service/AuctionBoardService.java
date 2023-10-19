@@ -25,10 +25,6 @@ public class AuctionBoardService {
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
         return auctionBoardDAO.findAll(builder, pageable);
     }
-    public Page<AuctionBoard> showAll(Pageable pageable) {
-        return auctionBoardDAO.findAll(pageable);
-    }
-
 
     public Page<AuctionBoard> showAll(Pageable pageable) {
         return auctionBoardDAO.findAll(pageable);
@@ -118,6 +114,5 @@ public class AuctionBoardService {
         }
 
         return filteredAuctionBoards;
->>>>>>> dclown
     }
 }
