@@ -31,6 +31,7 @@ public class AuctionBoardService {
     public Page<AuctionBoard> Search(String keyword, Pageable pageable){
         return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
     }
+
     public AuctionBoard show(int no) {
         return auctionBoardDAO.findById(no).orElse(null);
     }
@@ -38,6 +39,7 @@ public class AuctionBoardService {
     public Page<AuctionBoard> showAll(Pageable pageable) {
         return auctionBoardDAO.findAll(pageable);
     }
+
     public AuctionBoard create(AuctionBoard auctionBoard) {
         return auctionBoardDAO.save(auctionBoard);
     }
