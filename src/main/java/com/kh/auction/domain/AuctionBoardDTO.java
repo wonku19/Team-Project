@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class AuctionBoardDTO {
 
-    private Long TotalElements;
+    private int getTotalPages;
     private List Content;
 
 }

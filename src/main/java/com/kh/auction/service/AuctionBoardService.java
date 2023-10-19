@@ -23,17 +23,21 @@ public class AuctionBoardService {
     private AuctionBoardDAO auctionBoardDAO;
 
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
+//        return auctionBoardDAO.findAll(builder, pageable);
         return auctionBoardDAO.findAll(builder, pageable);
+    }
+
+
+    public Page<AuctionBoard> Search(String keyword, Pageable pageable){
+        return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
+    }
+    public AuctionBoard show(int no) {
+        return auctionBoardDAO.findById(no).orElse(null);
     }
 
     public Page<AuctionBoard> showAll(Pageable pageable) {
         return auctionBoardDAO.findAll(pageable);
     }
-
-    public AuctionBoard show(int no) {
-        return auctionBoardDAO.findById(no).orElse(null);
-    }
-
     public AuctionBoard create(AuctionBoard auctionBoard) {
         return auctionBoardDAO.save(auctionBoard);
     }
@@ -46,15 +50,18 @@ public class AuctionBoardService {
         return null;
     }
 
+
     public Page<AuctionBoard> Search(String keyword, Pageable pageable){
         return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
     }
+
 
     public AuctionBoard delete(int id) {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
         auctionBoardDAO.delete(category);
         return category;
     }
+
     public List<AuctionBoard> findByCategoryNo(int code) {
         return auctionBoardDAO.findByCategoryNo(code);
     }
@@ -114,5 +121,9 @@ public class AuctionBoardService {
         }
 
         return filteredAuctionBoards;
+    }
+
+    public List<AuctionBoard> findByChannelCode(int code) {
+        return auctionBoardDAO.findByCategoryNo(code);
     }
 }
