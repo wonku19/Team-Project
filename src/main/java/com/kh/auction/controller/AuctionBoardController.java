@@ -3,9 +3,15 @@ package com.kh.auction.controller;
 import com.kh.auction.domain.*;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -78,13 +84,13 @@ public class AuctionBoardController {
                 return Sort.by("auctionNo").descending(); // 기본값: 경매 번호 내림차순
         }
     }
-    @GetMapping("/auction/{no}")
+    @GetMapping("/public/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
     }
 
     @PostMapping("/public/post")
-    public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
+    public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo, int checkNo, int attendNo) {
         AuctionBoard vo = new AuctionBoard();
 
         // 이미지 경로를 저장할 변수
@@ -120,6 +126,8 @@ public class AuctionBoardController {
             vo.setAuctionNowbuy(nowBuy);
             vo.setAuctionGMoney(gMoney);
             vo.setAuctionImg(imagePaths.toString());
+            vo.setAuctionCheckNo(checkNo);
+            vo.setAuctionAttendNo(attendNo);
 
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
@@ -137,7 +145,7 @@ public class AuctionBoardController {
             throw new RuntimeException(e);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
+        return ResponseEntity.status(HttpStatus.OK).body(service.create(vo));
     }
 
     @PutMapping("/auction")

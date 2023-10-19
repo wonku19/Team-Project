@@ -50,4 +50,5 @@ public class AuctionBoardService {
     public List<AuctionBoard> getAuctionBoardsOrderByAttendNoDesc() {
         return auctionBoardDAO.findAllOrderByAuctionAttendNoDesc();
     }
+
 }

@@ -24,7 +24,6 @@ public class AuctionBoard {
     @Column(name = "auction_title")
     private String auctionTitle; // 경매 게시글 제목
     @Column(name = "auction_img")
-//    @ElementCollection
     private String auctionImg; // 경매 게시글에 등록된 이미지 목록
     @Column(name = "auction_date")
     private Date auctionDate; // 경매 등록일
@@ -49,9 +48,6 @@ public class AuctionBoard {
     private int auctionCheckNo; // 조회수
     @Column(name = "auction_attend_no")
     private int auctionAttendNo; // 입찰 참여 인원수
-
-
-
 
     @ManyToOne
     @JoinColumn(name="category_no")
