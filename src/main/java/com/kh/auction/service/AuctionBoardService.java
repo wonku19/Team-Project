@@ -70,7 +70,6 @@ public class AuctionBoardService {
         return auctionBoardDAO.findAllOrderByAuctionAttendNoDesc();
     }
 
-
     // Hot 게시글
     public List<AuctionBoard> findByHot(int no) {
         List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();

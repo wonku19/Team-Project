@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.UUID;
 
 
-
 @Slf4j
 @RestController
 @RequestMapping("/api/*")
@@ -93,13 +92,15 @@ public class AuctionBoardController {
                 return Sort.by("auctionNo").descending(); // 기본값: 경매 번호 내림차순
         }
     }
-    @GetMapping("/auction/{no}")
+
+    @GetMapping("/public/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(service.show(no));
     }
 
     @PostMapping("/public/post")
     public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
+
         AuctionBoard vo = new AuctionBoard();
 
         // 이미지 경로를 저장할 변수
@@ -135,6 +136,8 @@ public class AuctionBoardController {
             vo.setAuctionNowbuy(nowBuy);
             vo.setAuctionGMoney(gMoney);
             vo.setAuctionImg(imagePaths.toString());
+            vo.setAuctionCheckNo(checkNo);
+            vo.setAuctionAttendNo(attendNo);
 
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
@@ -323,6 +326,7 @@ public class AuctionBoardController {
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
         return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
     }
+
 
     // Hot 게시글
     @GetMapping("/public/auction/hot")
