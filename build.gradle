@@ -69,7 +69,7 @@ tasks.named('test') {
 //}
 //
 //configurations {
-//	querydsl.extendsFrom compileClasspath 
+//	querydsl.extendsFrom compileClasspath
 //}
 //
 //configurations {

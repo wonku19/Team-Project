@@ -26,11 +26,11 @@ public class QComments extends EntityPathBase<Comments> {
 
     public final DateTimePath<java.util.Date> commentDate = createDateTime("commentDate", java.util.Date.class);
 
-    public final NumberPath<Integer> commentId = createNumber("commentId", Integer.class);
+    public final NumberPath<Integer> commentNo = createNumber("commentNo", Integer.class);
 
     public final StringPath content = createString("content");
 
-    public final QMember id;
+    public final QMember memberId;
 
     public QComments(String variable) {
         this(Comments.class, forVariable(variable), INITS);
@@ -51,7 +51,7 @@ public class QComments extends EntityPathBase<Comments> {
     public QComments(Class<? extends Comments> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo"), inits.get("auctionNo")) : null;
-        this.id = inits.isInitialized("id") ? new QMember(forProperty("id")) : null;
+        this.memberId = inits.isInitialized("memberId") ? new QMember(forProperty("memberId")) : null;
     }
 
 }
