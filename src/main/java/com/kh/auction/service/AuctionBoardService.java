@@ -51,11 +51,6 @@ public class AuctionBoardService {
     }
 
 
-    public Page<AuctionBoard> Search(String keyword, Pageable pageable){
-        return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
-    }
-
-
     public AuctionBoard delete(int id) {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
         auctionBoardDAO.delete(category);
