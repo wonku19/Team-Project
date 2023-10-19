@@ -11,6 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+import java.awt.print.Pageable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -55,7 +60,61 @@ public class AuctionBoardService {
     public List<AuctionBoard> findByCategoryNo(int code) {
         return auctionBoardDAO.findByCategoryNo(code);
     }
+
     public List<AuctionBoard> getAuctionBoardsOrderByAttendNoDesc() {
         return auctionBoardDAO.findAllOrderByAuctionAttendNoDesc();
+    }
+
+
+    // Hot 게시글
+    public List<AuctionBoard> findByHot(int no) {
+        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
+        Date currentDate = new Date(); // 현재 날짜 가져오기
+
+        // 정렬
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionAttendNo).reversed());
+
+        List<AuctionBoard> filteredAuctionBoards = new ArrayList<>();
+
+        for (AuctionBoard board : allAuctionBoards) {
+            Date auctionEndDate = board.getAuctionEndDate();
+            // 게시글의 종료 날짜가 현재 날짜 이전이 아닌 경우에만 목록에 추가
+            if (auctionEndDate == null || !auctionEndDate.before(currentDate)) {
+                filteredAuctionBoards.add(board);
+            }
+
+            // 목록이 지정된 개수에 도달하면 루프 종료
+            if (filteredAuctionBoards.size() >= no) {
+                break;
+            }
+        }
+
+        return filteredAuctionBoards;
+    }
+
+    // New 게시글
+    public List<AuctionBoard> findByNew(int no) {
+        List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
+        Date currentDate = new Date(); // 현재 날짜 가져오기
+
+        // 정렬
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionDate).reversed());
+
+        List<AuctionBoard> filteredAuctionBoards = new ArrayList<>();
+
+        for (AuctionBoard board : allAuctionBoards) {
+            Date auctionEndDate = board.getAuctionEndDate();
+            // 게시글의 종료 날짜가 현재 날짜 이전이 아닌 경우에만 목록에 추가
+            if (auctionEndDate == null || !auctionEndDate.before(currentDate)) {
+                filteredAuctionBoards.add(board);
+            }
+
+            // 목록이 지정된 개수에 도달하면 루프 종료
+            if (filteredAuctionBoards.size() >= no) {
+                break;
+            }
+        }
+
+        return filteredAuctionBoards;
     }
 }
