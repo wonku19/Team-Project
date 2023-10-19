@@ -3,6 +3,7 @@ package com.kh.auction.controller;
 import com.kh.auction.domain.Member;
 //import com.kh.auction.domain.MemberDTO;
 import com.kh.auction.domain.MemberDTO;
+import com.kh.auction.security.TokenProvider;
 import com.kh.auction.service.MemberService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +22,8 @@ import java.util.Map;
 @RequestMapping("/api/*")
 @CrossOrigin(origins={"*"}, maxAge = 6000)
 public class MemberController {
-//    @Autowired
-//    private TokenProvider tokenProvider;
+    @Autowired
+    private TokenProvider tokenProvider;
 
     @Autowired
     private MemberService memberService;
@@ -84,8 +85,6 @@ public class MemberController {
 
 
 
-
-
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Member> delete(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
@@ -94,7 +93,7 @@ public class MemberController {
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
         if(member!=null){
-//            String token = tokenProvider.create(member);
+            String token = tokenProvider.create(member);
             MemberDTO responseDTO = MemberDTO.builder()
                     .id(member.getId())
                     .name(member.getName())
@@ -102,17 +101,16 @@ public class MemberController {
                     .nick(member.getNick())
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
-//                    .token(token)
+                    .token(token)
                     .build();
+            log.info(""+    responseDTO);
             return ResponseEntity.ok().body(responseDTO);
         }else {
+            log.info("로그인 실패");
             return ResponseEntity.badRequest().build();
         }
 
 
     }
-
-
-
 
 }

@@ -52,7 +52,7 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public final StringPath itemName = createString("itemName");
 
-    public final QMember memberId;
+    public final StringPath memberId = createString("memberId");
 
     public QAuctionBoard(String variable) {
         this(AuctionBoard.class, forVariable(variable), INITS);
@@ -73,7 +73,6 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
     public QAuctionBoard(Class<? extends AuctionBoard> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.category = inits.isInitialized("category") ? new QCategory(forProperty("category")) : null;
-        this.memberId = inits.isInitialized("memberId") ? new QMember(forProperty("memberId")) : null;
     }
 
 }

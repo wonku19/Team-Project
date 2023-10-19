@@ -1,7 +1,8 @@
 package com.kh.auction.controller;
 
 import com.kh.auction.domain.*;
-import com.kh.auction.repo.CategoryDAO;
+import com.kh.auction.domain.AuctionBoard;
+import com.kh.auction.domain.Category;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
 import com.querydsl.core.BooleanBuilder;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.*;
 
 @Slf4j
@@ -35,55 +37,94 @@ public class AuctionBoardController {
     private AuctionBoardService auctionBoardService;
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryService category;
 
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-
-//    @GetMapping("/public/auction")
-//    public ResponseEntity<Map<String, Object>> BoardList(@RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="category", required = false) Integer category) {
-//        Sort sort = Sort.by("auctionNo").descending();
-//
-//        // 한 페이지의 10개
-//        Pageable pageable = PageRequest.of(page-1, 5, sort);
-//
-//        // 동적 쿼리를 위한 QuerlDSL을 사용한 코드들 추가
-//
-//        // 1. Q도메인 클래스를 가져와야 한다.
-//        QAuctionBoard AuctionBoard = QAuctionBoard.auctionBoard;
-//        // 2. BooleanBuilder는 where문에 들어가는 조건들을 넣어주는 컨테이너
-//        BooleanBuilder builder = new BooleanBuilder();
-//        log.info("카테고리"+category);
-//        if(category!=null) {
-//            // 3. 원하는 조건은 필드값과 같이 결합해서 생성한다.
-//              BooleanExpression expression = QAuctionBoard.auctionBoard.category.categoryNo.eq(category);
-////            BooleanExpression expression =
-//
-//            // 4. 만들어진 조건은 where문에 and나 or 같은 키워드와 결합한다.
-//            builder.and(expression);
-//            log.info("불리언 빌더"+ builder.and(expression));
-//        }
-//
-//        Page<AuctionBoard> result = categoryService.showAll(pageable, builder);
-//
-//        //log.info("Total Pages : " + result.getTotalPages()); // 총 몇 페이지
-//        //log.info("Total Count : " + result.getTotalElements()); // 전체 개수
-//        //log.info("Page Number : " + result.getNumber()); // 현재 페이지 번호
-//        //log.info("Page Size : " + result.getSize()); // 페이지당 데이터 개수
-//        //log.info("Next Page : " + result.hasNext()); // 다음 페이지가 있는지 존재 여부
-//        //log.info("First Page : " + result.isFirst()); // 시작 페이지 여부
-//
-//        //return ResponseEntity.status(HttpStatus.OK).build();
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("totalPages", result.getTotalPages()); // 추가: 총 페이지 수
-//        response.put("content", result.getContent());
-//        log.info("리절트"+result.getContent());
-//        log.info(""+result.getTotalPages());
-//        log.info(""+ResponseEntity.status(HttpStatus.OK).body(response));
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
+//    @GetMapping("/auction")
+//    public ResponseEntity<List<AuctionBoard>> showAll() {
+//        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
 //    }
 
+    @PostMapping("/public/search")
+    public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
+
+        // @RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="keyword",required = false) String keyword
+
+        log.info("request : " + request);
+
+        int page = request.getPage();
+        String keyword = request.getKeyword();
+
+        log.info("keyword :: " + keyword);
+
+        // required = false 를 주지 않았을땐 오류 났음
+        Sort sort = Sort.by("auctionNo").descending();
+        Pageable pageable = PageRequest.of(page-1,20,sort);
+        Page<AuctionBoard> list = null;
+        log.info("키워드 :: "+keyword);
+    if(keyword == null){
+        list = auctionBoardService.showAll(pageable);
+    }else{
+        list = auctionBoardService.Search(keyword, pageable);
+    }
+        log.info(""+list.getContent());
+        AuctionBoardDTO dto = new AuctionBoardDTO();
+        dto.setContent(list.getContent());
+        dto.setTotalElements(list.getTotalElements());
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
+    }
+//        return ResponseEntity.status(HttpStatus.OK).build();
+
+
+//    }
+
+    @GetMapping("/public/auction")
+    public ResponseEntity<Map<String, Object>> BoardList(
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "category", required = false) Integer category,
+            @RequestParam(name = "sortOption", defaultValue = "1") int sortOption
+    ) {
+        // 정렬 방식에 따라 Sort 객체 생성
+        Sort sort = getSortForOption(sortOption);
+
+        Pageable pageable = PageRequest.of(page - 1, 3, sort);
+
+        QAuctionBoard AuctionBoard = QAuctionBoard.auctionBoard;
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (category != null) {
+            BooleanExpression expression = QAuctionBoard.auctionBoard.category.categoryNo.eq(category);
+            builder.and(expression);
+        }
+
+        Page<AuctionBoard> result = auctionBoardService.showAll(pageable, builder);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("totalPages", result.getTotalPages());
+        response.put("content", result.getContent());
+        log.info(""+ result.getContent());
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+
+    private Sort getSortForOption(int sortOption) {
+        switch (sortOption) {
+            case 1:
+                return Sort.by("auctionAttendNo").descending(); // 입찰 횟수 내림차순
+            case 2:
+                return Sort.by("auctionCheckNo").descending(); // 조회수 내림차순
+            case 3:
+                return Sort.by("auctionNo").ascending(); // 등록순
+            case 4:
+                return Sort.by("currentPrice").ascending(); // 낮은 가격순
+            case 5:
+                return Sort.by("currentPrice").descending(); // 높은 가격순
+            default:
+                return Sort.by("auctionNo").descending(); // 기본값: 경매 번호 내림차순
+        }
+    }
     @GetMapping("/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
@@ -163,7 +204,7 @@ public class AuctionBoardController {
     // 카테고리
     @GetMapping("/auction/{auctionNo}")
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService.findByAuctionNo(auctionNo));
+        return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
     }
 
     // Hot 게시글
