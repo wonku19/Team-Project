@@ -49,9 +49,6 @@ public class AuctionBoard {
     @Column(name = "auction_attend_no")
     private int auctionAttendNo; // 입찰 참여 인원수
 
-    @Column(name = "auction_point")
-    private int auctionPoint; // 적립 포인트
-
     @ManyToOne
     @JoinColumn(name="category_no")
     private Category category;

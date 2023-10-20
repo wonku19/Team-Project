@@ -95,7 +95,17 @@ public class AuctionBoardController {
 
     @GetMapping("/public/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
+        AuctionBoard auctionBoard = auctionBoardService.show(no);
+        if (auctionBoard != null) {
+
+            auctionBoard.setAuctionCheckNo(auctionBoard.getAuctionCheckNo() + 1);
+            auctionBoardService.update(auctionBoard);
+
+            return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
     }
 
     @PostMapping("/public/post")

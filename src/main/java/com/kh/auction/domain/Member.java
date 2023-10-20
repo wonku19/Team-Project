@@ -41,4 +41,7 @@ public class Member {
     @Column(name = "member_authority")
     private int authority;
 
+//    @Column(name = "member_point")
+//    private int Point; // 적립 포인트
+
 }
