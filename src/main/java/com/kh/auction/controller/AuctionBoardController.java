@@ -171,20 +171,23 @@ public class AuctionBoardController {
     
 
     @PostMapping("/public/search")
-    public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
+    public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request ) {
         AuctionBoard auctionBoard = new AuctionBoard();
         // @RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="keyword",required = false) String keyword
         // required = false 를 주지 않았을땐 오류 났음
         log.info("request : " + request);
         int page = request.getPage();
         String keyword = request.getKeyword();
+        int sortOption = request.getSortOption();
 //        int categoryNo
 
         log.info("cc"+ category);
         log.info("keyword :: " + keyword);
 
 
-        Sort sort = Sort.by("auctionNo").descending();
+//        Sort sort = Sort.by("auctionNo").descending();
+        Sort sort = getSortForOption(sortOption);
+        log.info("sort::"+ sort);
         Pageable pageable = PageRequest.of(page-1,5,sort);
         log.info("page :: " + pageable.getPageSize());
         Page<AuctionBoard> list = null;
