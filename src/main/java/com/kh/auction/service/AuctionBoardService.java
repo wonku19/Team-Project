@@ -3,6 +3,7 @@ package com.kh.auction.service;
 import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.repo.AuctionBoardDAO;
 import com.querydsl.core.BooleanBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@Slf4j
 public class AuctionBoardService {
 
     @Autowired
@@ -31,6 +33,7 @@ public class AuctionBoardService {
     public Page<AuctionBoard> Search(String keyword, Pageable pageable){
         return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);
     }
+
     public AuctionBoard show(int no) {
         return auctionBoardDAO.findById(no).orElse(null);
     }
@@ -38,6 +41,7 @@ public class AuctionBoardService {
     public Page<AuctionBoard> showAll(Pageable pageable) {
         return auctionBoardDAO.findAll(pageable);
     }
+
     public AuctionBoard create(AuctionBoard auctionBoard) {
         return auctionBoardDAO.save(auctionBoard);
     }
