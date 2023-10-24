@@ -17,6 +17,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -98,12 +100,16 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
     }
 
-    @PostMapping("/public/post")
+    // 게시글 작성
+    @PostMapping("/user/post")
     public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
         AuctionBoard vo = new AuctionBoard();
 
         // 이미지 경로를 저장할 변수
         StringBuilder imagePaths = new StringBuilder();
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("dddddddddddddddddddddddddddddddddddddddddddddddddd" + principal);
 
         try {
             // 각 이미지 처리
@@ -138,6 +144,10 @@ public class AuctionBoardController {
 
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
+
+
+
+
             vo.setCategory(category);
 
             vo.setAuctionDate(new Date());
@@ -145,15 +155,21 @@ public class AuctionBoardController {
             // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
-//            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-            calendar.add(Calendar.MINUTE, 481); // 테스트
+            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
             vo.setAuctionEndDate(calendar.getTime());
+
+            Member member = new Member();
+            member.setId(id);
+            vo.setMemberId(member);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
+        // AuctionBoard 엔티티 저장
+        AuctionBoard savedAuction = auctionBoardService.create(vo);
+
+        return ResponseEntity.status(HttpStatus.OK).body(savedAuction);
     }
 
     

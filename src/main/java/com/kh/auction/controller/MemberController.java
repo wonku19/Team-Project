@@ -38,7 +38,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
-    @PostMapping("/user/create")
+    @PostMapping("/public/create")
     public ResponseEntity create(@RequestBody MemberDTO dto) {
         Member vo = new Member();
         Member member = Member.builder()
@@ -46,6 +46,7 @@ public class MemberController {
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
                 .nick(dto.getNick())
+                .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .sphone(dto.getSphone())
                 .addr(dto.getAddr())
@@ -67,7 +68,7 @@ public class MemberController {
 
 
     // 아이디 중복
-    @PostMapping("/user/duplicate")
+    @PostMapping("/public/duplicate")
     public ResponseEntity<Map<String, Boolean>> duplicate(@RequestParam(name = "id") String id) {
         try {
             boolean isDuplicate = memberService.duplicate(id) != null;
@@ -89,11 +90,11 @@ public class MemberController {
     public ResponseEntity<Member> delete(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
     }
-    @PostMapping("/user/signin")
+    @PostMapping("/public/signin")
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
         if(member!=null){
-//            String token = tokenProvider.create(member);
+            String token = tokenProvider.create(member);
             MemberDTO responseDTO = MemberDTO.builder()
                     .id(member.getId())
                     .name(member.getName())
@@ -101,7 +102,7 @@ public class MemberController {
                     .nick(member.getNick())
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
-//                    .token(token)
+                    .token(token)
                     .build();
             return ResponseEntity.ok().body(responseDTO);
         }else {
