@@ -39,7 +39,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
-    @PostMapping("/user/create")
+    @PostMapping("/public/create")
     public ResponseEntity create(@RequestBody MemberDTO dto) {
         Member vo = new Member();
         Member member = Member.builder()
@@ -68,7 +68,7 @@ public class MemberController {
 
 
     // 아이디 중복
-    @PostMapping("/user/duplicate")
+    @PostMapping("/public/duplicate")
     public ResponseEntity<Map<String, Boolean>> duplicate(@RequestParam(name = "id") String id) {
         try {
             boolean isDuplicate = memberService.duplicate(id) != null;
@@ -90,7 +90,7 @@ public class MemberController {
     public ResponseEntity<Member> delete(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
     }
-    @PostMapping("/user/signin")
+    @PostMapping("/public/signin")
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
         log.info(dto.getId()+"ㅂㅁ"+dto.getPassword());
