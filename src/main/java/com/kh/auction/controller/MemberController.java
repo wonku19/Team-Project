@@ -104,6 +104,7 @@ public class MemberController {
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
                     .token(token)
+                    .point(member.getPoint())
                     .build();
             return ResponseEntity.ok().body(responseDTO);
         }else {
@@ -115,6 +116,7 @@ public class MemberController {
 
 
 
+    // 포인트 api
     @PutMapping("/user/point")
     public ResponseEntity<Member> updatePoint(@RequestBody Member member) {
         String id = member.getId();
