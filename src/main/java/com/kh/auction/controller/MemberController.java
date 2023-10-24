@@ -1,5 +1,6 @@
 package com.kh.auction.controller;
 
+import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Member;
 //import com.kh.auction.domain.MemberDTO;
 import com.kh.auction.domain.MemberDTO;
@@ -92,8 +93,9 @@ public class MemberController {
     @PostMapping("/user/signin")
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
+        log.info(dto.getId()+"ㅂㅁ"+dto.getPassword());
         if(member!=null){
-//            String token = tokenProvider.create(member);
+            String token = tokenProvider.create(member);
             MemberDTO responseDTO = MemberDTO.builder()
                     .id(member.getId())
                     .name(member.getName())
@@ -101,7 +103,7 @@ public class MemberController {
                     .nick(member.getNick())
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
-//                    .token(token)
+                    .token(token)
                     .build();
             return ResponseEntity.ok().body(responseDTO);
         }else {
@@ -110,5 +112,23 @@ public class MemberController {
 
 
     }
+
+
+
+    @PutMapping("/user/point")
+    public ResponseEntity<Member> updatePoint(@RequestBody Member member) {
+        String id = member.getId();
+        int point = member.getPoint();
+        Member existMember = memberService.show(id);
+
+        if (existMember != null) {
+            existMember.setPoint(existMember.getPoint()+ point);
+            Member result = memberService.update(id,existMember.getPoint());
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 
 }
