@@ -166,7 +166,7 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.create(vo));
     }
 
-    
+
 
     @PostMapping("/public/search")
     public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
@@ -176,7 +176,7 @@ public class AuctionBoardController {
         log.info("request : " + request);
 
         int page = request.getPage();
-        
+
         String keyword = request.getKeyword();
 
         log.info("keyword :: " + keyword);
