@@ -59,5 +59,4 @@ public class AuctionBoard {
     @ManyToOne
     @JoinColumn(name="member_id")
     private Member memberId;
-
 }

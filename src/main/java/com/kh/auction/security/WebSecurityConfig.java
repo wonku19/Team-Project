@@ -30,7 +30,7 @@ public class WebSecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
-                .requestMatchers(new AntPathRequestMatcher("/api/user/**")).permitAll()
+                .requestMatchers(new AntPathRequestMatcher("/api/user/**")).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/api/public/**")).permitAll()
                 .anyRequest().authenticated();
 

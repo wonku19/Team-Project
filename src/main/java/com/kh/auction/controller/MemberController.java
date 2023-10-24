@@ -1,5 +1,6 @@
 package com.kh.auction.controller;
 
+import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Member;
 //import com.kh.auction.domain.MemberDTO;
 import com.kh.auction.domain.MemberDTO;
@@ -38,7 +39,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
-    @PostMapping("/user/create")
+    @PostMapping("/public/create")
     public ResponseEntity create(@RequestBody MemberDTO dto) {
         Member vo = new Member();
         Member member = Member.builder()
@@ -67,7 +68,7 @@ public class MemberController {
 
 
     // 아이디 중복
-    @PostMapping("/user/duplicate")
+    @PostMapping("/public/duplicate")
     public ResponseEntity<Map<String, Boolean>> duplicate(@RequestParam(name = "id") String id) {
         try {
             boolean isDuplicate = memberService.duplicate(id) != null;
@@ -89,9 +90,10 @@ public class MemberController {
     public ResponseEntity<Member> delete(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
     }
-    @PostMapping("/user/signin")
+    @PostMapping("/public/signin")
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
+        log.info(dto.getId()+"ㅂㅁ"+dto.getPassword());
         if(member!=null){
             String token = tokenProvider.create(member);
             MemberDTO responseDTO = MemberDTO.builder()
@@ -102,6 +104,7 @@ public class MemberController {
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
                     .token(token)
+                    .point(member.getPoint())
                     .build();
             return ResponseEntity.ok().body(responseDTO);
         }else {
@@ -110,5 +113,24 @@ public class MemberController {
 
 
     }
+
+
+
+    // 포인트 api
+    @PutMapping("/user/point")
+    public ResponseEntity<Member> updatePoint(@RequestBody Member member) {
+        String id = member.getId();
+        int point = member.getPoint();
+        Member existMember = memberService.show(id);
+
+        if (existMember != null) {
+            existMember.setPoint(existMember.getPoint()+ point);
+            Member result = memberService.update(id,existMember.getPoint());
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
 
 }
