@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -97,10 +96,17 @@ public class AuctionBoardController {
 
     @GetMapping("/public/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.show(no));
+        AuctionBoard auctionBoard = auctionBoardService.show(no);
+        if (auctionBoard != null) {
+            auctionBoard.setAuctionCheckNo(auctionBoard.getAuctionCheckNo() + 1);
+            auctionBoardService.update(auctionBoard);
+            return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
     }
 
-    // 게시글 작성
     @PostMapping("/user/post")
     public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
         AuctionBoard vo = new AuctionBoard();
@@ -155,9 +161,10 @@ public class AuctionBoardController {
             // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
-            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+//            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+            calendar.add(Calendar.MINUTE, 1); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
-
+//
             Member member = new Member();
             member.setId(id);
             vo.setMemberId(member);
@@ -172,7 +179,7 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(savedAuction);
     }
 
-    
+
 
     @PostMapping("/public/search")
     public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
@@ -182,7 +189,7 @@ public class AuctionBoardController {
         log.info("request : " + request);
 
         int page = request.getPage();
-        
+
         String keyword = request.getKeyword();
 
         log.info("keyword :: " + keyword);
@@ -214,7 +221,7 @@ public class AuctionBoardController {
 //    }
 
 
-    @PutMapping("/auction")
+    @PutMapping("/public/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
         AuctionBoard result = auctionBoardService.update(auctionBoard);
         if (result != null) {

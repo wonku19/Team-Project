@@ -40,4 +40,6 @@ public class MemberDTO {
 
     private Date authority;
 
+    private int point;
+
 }

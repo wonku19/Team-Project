@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.Date;
 
@@ -40,5 +41,9 @@ public class Member {
     private Date singupDate;
     @Column(name = "member_authority")
     private int authority;
+    @Column(name="member_point")
+    private int point;
+
+
 
 }

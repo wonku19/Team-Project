@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.util.List;
 
 @Service
@@ -34,13 +35,16 @@ public class MemberService {
 
     }
 
-    public Member update(Member member) {
-        Member target = memberDAO.findById(member.getId()).orElse(null);
+    // 포인트 api
+    public Member update(String id, int point) {
+        Member target = memberDAO.findById(id).orElse(null);
         if (target != null) {
-            return memberDAO.save(member);
+            target.setPoint(point);
+            return memberDAO.save(target);
         }
         return null;
     }
+
 
 
     public Member delete(String id) {
