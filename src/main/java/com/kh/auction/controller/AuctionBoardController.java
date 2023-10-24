@@ -7,7 +7,6 @@ import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberPath;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -180,44 +179,46 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(savedAuction);
     }
 
-    
+
 
     @PostMapping("/public/search")
-    public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request ) {
-        AuctionBoard auctionBoard = new AuctionBoard();
-        // @RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="keyword",required = false) String keyword
-        // required = false 를 주지 않았을땐 오류 났음
-        log.info("request : " + request);
-        int page = request.getPage();
-        String keyword = request.getKeyword();
-        int sortOption = request.getSortOption();
-//        int categoryNo
+    public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
 
-        log.info("cc"+ category);
+        // @RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="keyword",required = false) String keyword
+
+        log.info("request : " + request);
+
+        int page = request.getPage();
+
+        String keyword = request.getKeyword();
+
         log.info("keyword :: " + keyword);
 
-
-//        Sort sort = Sort.by("auctionNo").descending();
-        Sort sort = getSortForOption(sortOption);
-        log.info("sort::"+ sort);
+        // required = false 를 주지 않았을땐 오류 났음
+        Sort sort = Sort.by("auctionNo").descending();
         Pageable pageable = PageRequest.of(page-1,5,sort);
         log.info("page :: " + pageable.getPageSize());
         Page<AuctionBoard> list = null;
         log.info("키워드 :: "+keyword);
 
         if(keyword == null){
-            pageable = PageRequest.of(page-1,3,sort);
             list = auctionBoardService.showAll(pageable);
         }else{
             list = auctionBoardService.Search(keyword, pageable);
         }
-
         log.info(""+list.getContent());
         AuctionBoardDTO dto = new AuctionBoardDTO();
+
+
+
         dto.setContent(list.getContent());
         dto.setGetTotalPages(list.getTotalPages());
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
+//        return ResponseEntity.status(HttpStatus.OK).build();
+
+
+//    }
 
 
     @PutMapping("/public/auction")
@@ -234,7 +235,10 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.delete(no));
     }
     // 카테고리
-
+    @GetMapping("/auction/{auctionNo}")
+    public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
+        return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
+    }
 
 
     // Hot 게시글

@@ -18,7 +18,7 @@ public class TokenProvider {
 
     public String create(Member member) {
         // 토큰 생성 -> 기한 지정 가능 (1일)
-        Date expiryDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
+        Date expiryDate = Date.from(Instant.now().plus(10, ChronoUnit.DAYS));
 
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS512, SECRET_KEY) // header에 들어갈 내용
