@@ -133,5 +133,20 @@ public class MemberController {
         }
     }
 
+    // 내 정보 수정 api
+    @PutMapping("/user/updateuser")
+    public ResponseEntity<Member> updateUser(@RequestBody Member member) {
+        String id = member.getId();
+        String nick = member.getNick();
+        String phone = member.getPhone();
+        String email = member.getEmail();
+        String addr = member.getAddr();
+
+        Member result = memberService.userUpdate(id, nick, phone, email, addr);
+        if(result != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
 
 }
