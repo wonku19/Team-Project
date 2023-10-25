@@ -161,8 +161,8 @@ public class AuctionBoardController {
             // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
-//            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-            calendar.add(Calendar.MINUTE, 1); // 테스트
+            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+//            calendar.add(Calendar.MINUTE, 1); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
 //
             Member member = new Member();
