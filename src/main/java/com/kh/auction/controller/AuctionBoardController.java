@@ -94,19 +94,44 @@ public class AuctionBoardController {
         }
     }
 
-    @GetMapping("/public/auction/{no}")
+    // 게시글 조회 / 조회수 +1
+    @GetMapping("/user/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
         AuctionBoard auctionBoard = auctionBoardService.show(no);
         if (auctionBoard != null) {
-            auctionBoard.setAuctionCheckNo(auctionBoard.getAuctionCheckNo() + 1);
-            auctionBoardService.update(auctionBoard);
+            auctionBoardService.updateCheckNo(no);
             return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
-
     }
 
+    // 경매 입찰하기 / 입찰횟수 +1
+    @PutMapping("/user/auction/{auctionNo}")
+    public ResponseEntity<AuctionBoard> placeBid(@PathVariable int auctionNo, @RequestBody AuctionBoard auction) {
+        int price = auction.getCurrentPrice();
+
+        // 경매 번호에 해당하는 경매 게시물을 조회
+        AuctionBoard auctionBoard = auctionBoardService.show(auctionNo);
+
+        if (auctionBoard != null) {
+            // 현재 가격과 비교하여 유효한 입찰인 경우에만 업데이트
+            if (price > auctionBoard.getCurrentPrice()) {
+                auctionBoard.setCurrentPrice(price); // 새로운 입찰 가격으로 설정
+                auctionBoardService.updatePrice(auctionNo, price);
+                auctionBoardService.updateCurrentNum(auctionNo); // 입찰 횟수 업데이트
+                return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
+            } else {
+                // 유효하지 않은 입찰 금액
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+        } else {
+            // 경매 게시물이 없음
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
+    // 게시글 작성
     @PostMapping("/user/post")
     public ResponseEntity<AuctionBoard> create(@AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
         AuctionBoard vo = new AuctionBoard();
@@ -115,7 +140,6 @@ public class AuctionBoardController {
         StringBuilder imagePaths = new StringBuilder();
 
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("dddddddddddddddddddddddddddddddddddddddddddddddddd" + principal);
 
         try {
             // 각 이미지 처리
@@ -151,9 +175,6 @@ public class AuctionBoardController {
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
 
-
-
-
             vo.setCategory(category);
 
             vo.setAuctionDate(new Date());
@@ -161,10 +182,9 @@ public class AuctionBoardController {
             // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
-//            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-            calendar.add(Calendar.MINUTE, 1); // 테스트
+            calendar.add(Calendar.WEEK_OF_YEAR, 1); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
-//
+
             Member member = new Member();
             member.setId(id);
             vo.setMemberId(member);
@@ -178,8 +198,6 @@ public class AuctionBoardController {
 
         return ResponseEntity.status(HttpStatus.OK).body(savedAuction);
     }
-
-
 
     @PostMapping("/public/search")
     public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
@@ -217,9 +235,7 @@ public class AuctionBoardController {
     }
 //        return ResponseEntity.status(HttpStatus.OK).build();
 
-
 //    }
-
 
     @PutMapping("/public/auction")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
@@ -239,7 +255,6 @@ public class AuctionBoardController {
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
         return ResponseEntity.status(HttpStatus.OK).body(category.findByAuctionNo(auctionNo));
     }
-
 
     // Hot 게시글
     @GetMapping("/public/auction/hot")
@@ -272,5 +287,11 @@ public class AuctionBoardController {
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+    // 사용자 총 게시물 조회
+    @GetMapping("/public/auction/count")
+    public ResponseEntity<Integer> countAuctionByMemberId(@RequestParam("memberId") String memberId) {
+        Integer result = auctionBoardService.countAuctionByMemberId(memberId);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 
 }

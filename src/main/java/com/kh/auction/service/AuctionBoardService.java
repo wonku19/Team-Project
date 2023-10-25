@@ -1,6 +1,7 @@
 package com.kh.auction.service;
 
 import com.kh.auction.domain.AuctionBoard;
+import com.kh.auction.domain.Member;
 import com.kh.auction.repo.AuctionBoardDAO;
 import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,6 @@ public class AuctionBoardService {
         return null;
     }
 
-
     public AuctionBoard delete(int id) {
         AuctionBoard category = auctionBoardDAO.findById(id).orElse(null);
         auctionBoardDAO.delete(category);
@@ -67,6 +67,15 @@ public class AuctionBoardService {
 
     public List<AuctionBoard> getAuctionBoardsOrderByAttendNoDesc() {
         return auctionBoardDAO.findAllOrderByAuctionAttendNoDesc();
+    }
+
+    public AuctionBoard updatePrice(int no, int price) {
+        AuctionBoard target = auctionBoardDAO.findById(no).orElse(null);
+        if (target != null) {
+            target.setCurrentPrice(price);
+            return auctionBoardDAO.save(target);
+        }
+        return null;
     }
 
     // Hot 게시글
@@ -124,4 +133,31 @@ public class AuctionBoardService {
     public List<AuctionBoard> findByChannelCode(int code) {
         return auctionBoardDAO.findByCategoryNo(code);
     }
+
+    // 조회수 +1
+    public AuctionBoard updateCheckNo(int no) {
+        AuctionBoard auctionBoard = auctionBoardDAO.findById(no).orElse(null);
+        if (auctionBoard != null) {
+            auctionBoard.setAuctionCheckNo(auctionBoard.getAuctionCheckNo() + 1);
+            return auctionBoardDAO.save(auctionBoard);
+        }
+        return null;
+    }
+
+    // 입찰횟수 +1
+    public AuctionBoard updateCurrentNum(int no) {
+        AuctionBoard auctionBoard = auctionBoardDAO.findById(no).orElse(null);
+        if (auctionBoard != null) {
+            auctionBoard.setCurrentNum(auctionBoard.getCurrentNum() + 1);
+            auctionBoard.setAuctionCheckNo(auctionBoard.getAuctionCheckNo() - 1);
+            return auctionBoardDAO.save(auctionBoard);
+        }
+        return null;
+    }
+
+    // 사용자 총 게시물 조회
+    public Integer countAuctionByMemberId(String memberId) {
+        return auctionBoardDAO.countAuctionByMemberId(memberId);
+    }
+
 }

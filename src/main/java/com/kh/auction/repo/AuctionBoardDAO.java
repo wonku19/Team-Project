@@ -21,12 +21,12 @@ public interface AuctionBoardDAO extends JpaRepository<AuctionBoard, Integer>, Q
     @Query("SELECT ab FROM AuctionBoard ab WHERE ab.auctionNo = :auction_no")
     AuctionBoard show(@Param("auction_no") int auction_no);
 
+    @Query("SELECT COUNT(a) FROM AuctionBoard a WHERE a.memberId = :memberId")
+    long countByMemberId(@Param("memberId") String memberId);
+
     Page<AuctionBoard> findByAuctionTitleContaining(String keyword, Pageable pageable);
+
+    // 사용자 총 게시물 조회
+    @Query("SELECT COUNT(a.auctionNo) AS AUCTION_COUNT FROM AuctionBoard a WHERE a.memberId.id = :memberId")
+    Integer countAuctionByMemberId(@Param("memberId") String memberId);
 }
-
-
-
-
-
-
-
