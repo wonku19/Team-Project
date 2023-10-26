@@ -1,17 +1,31 @@
 package com.kh.auction.service;
 
+import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Comments;
+import com.kh.auction.domain.QComments;
 import com.kh.auction.repo.CommentsDAO;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+
 
 @Service
 public class CommentsService {
 
     @Autowired
     private CommentsDAO commentsDAO;
+
+    @Autowired(required = true)
+    private JPAQueryFactory queryFactory;
+
+    private final QComments QComments = com.kh.auction.domain.QComments.comments;
 
     // 게시글 1개에 따른 댓글 전체 조회
     public List<Comments> boardCommentsList(int no) {
@@ -43,6 +57,27 @@ public class CommentsService {
         Comments data = commentsDAO.findById(id).orElse(null);
         commentsDAO.delete(data);
         return data;
+    }
+
+
+    public List<Comments> findByComments(int id) {
+        return commentsDAO.findByBoardComments(id);
+    }
+
+    public List<Comments> getAllTopLevelComments(int auctionNo) {
+        return queryFactory.selectFrom(QComments)
+                .where(QComments.parent.isNull())
+                .where(QComments.auctionNo.eq(auctionNo))
+                .orderBy(QComments.commentDate.desc())
+                .fetch();
+    }
+
+    public List<Comments> getRepliesByCommentId(Integer parentId, int auctionNo) {
+        return queryFactory.selectFrom(QComments)
+                .where(QComments.commentParent.eq(parentId))
+                .where(QComments.auctionNo.eq(auctionNo))
+                .orderBy(QComments.commentDate.asc())
+                .fetch();
     }
 
 
