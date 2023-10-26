@@ -43,6 +43,11 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Member> userShow(@RequestBody String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
+    }
+
     @PostMapping("/public/create")
     public ResponseEntity create(@RequestBody MemberDTO dto) {
         Member vo = new Member();
