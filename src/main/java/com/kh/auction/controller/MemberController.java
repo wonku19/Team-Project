@@ -30,13 +30,16 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//    @GetMapping("/user")
-//    public ResponseEntity<List<Member>> showAll() {
-//        return ResponseEntity.status(HttpStatus.OK).body(memberService.showAll());
-//    }
+    @GetMapping("/public")
+    public ResponseEntity<List<Member>> showAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(memberService.showAll());
+    }
 
     @GetMapping("/user")
     public ResponseEntity<Member> show(@AuthenticationPrincipal String id) {
+        Member member = new Member();
+        member.setId(id);
+
         return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
