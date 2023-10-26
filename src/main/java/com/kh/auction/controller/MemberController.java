@@ -48,6 +48,7 @@ public class MemberController {
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
                 .nick(dto.getNick())
+                .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .sphone(dto.getSphone())
                 .addr(dto.getAddr())

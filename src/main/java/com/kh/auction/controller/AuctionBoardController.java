@@ -5,8 +5,10 @@ import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
+import com.kh.auction.service.CommentsService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import jakarta.persistence.Column;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,10 @@ public class AuctionBoardController {
 
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
+
+
+
+
 
 
     @GetMapping("/public/auction")
@@ -271,6 +277,7 @@ public class AuctionBoardController {
 
         return  ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
 
 
 }
