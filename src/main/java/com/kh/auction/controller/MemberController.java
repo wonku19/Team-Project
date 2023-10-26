@@ -127,6 +127,7 @@ public class MemberController {
         Member existMember = memberService.show(id);
         if (existMember != null) {
             existMember.setPoint(existMember.getPoint()+ point);
+            log.info(existMember.getPoint()+"ss"+point);
             Member result = memberService.update(id,existMember.getPoint());
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } else {
