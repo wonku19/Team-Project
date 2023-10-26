@@ -51,6 +51,7 @@ public class MemberController {
                 .password(passwordEncoder.encode(dto.getPassword()))
                 .name(dto.getName())
                 .nick(dto.getNick())
+                .email(dto.getEmail())
                 .phone(dto.getPhone())
                 .sphone(dto.getSphone())
                 .addr(dto.getAddr())
@@ -135,5 +136,25 @@ public class MemberController {
         }
     }
 
+    // 내 정보 수정 api
+    @PutMapping("/user/updateuser")
+    public ResponseEntity<Member> updateUser(@AuthenticationPrincipal String id , @RequestBody Member member) {
+
+        String nick = member.getNick();
+        String phone = member.getPhone();
+        String email = member.getEmail();
+        String addr = member.getAddr();
+        Member existMember = memberService.show(id);
+        existMember.setNick(nick);
+        existMember.setPhone(phone);
+        existMember.setEmail(email);
+        existMember.setAddr(addr);
+
+        Member result = memberService.userUpdate(id, existMember.getNick(), existMember.getPhone(), existMember.getEmail(), existMember.getAddr());
+        if(result != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
 
 }

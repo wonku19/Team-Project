@@ -1,5 +1,6 @@
 package com.kh.auction.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,15 +22,24 @@ public class Comments {
     @SequenceGenerator(name = "commentSequence", sequenceName = "SEQ_COMMENT", allocationSize = 1)
     private int commentNo;
 
-    @Column(name="comment_content")
+    @Column(name="content")
     private String content;
 
     @Column(name = "comment_date")
     private Date commentDate;
 
-    @ManyToOne
-    @JoinColumn(name="auction_no")
-    private AuctionBoard auctionNo;
+    @Column(name="comment_parent")
+    private Integer commentParent;
+
+    @JsonIgnore
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="comment_parent", referencedColumnName = "comment_no", insertable = false, updatable = false)
+    private Comments parent;
+
+//    @ManyToOne
+//    @JoinColumn(name="auction_no")
+    @Column(name="auction_No")
+    private int auctionNo;
 
     @ManyToOne
     @JoinColumn(name="member_id")

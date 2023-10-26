@@ -35,11 +35,25 @@ public class MemberService {
 
     }
 
+
     // 포인트 api
     public Member update(String id, int point) {
         Member target = memberDAO.findById(id).orElse(null);
         if (target != null) {
             target.setPoint(point);
+            return memberDAO.save(target);
+        }
+        return null;
+    }
+
+    // 내정보 수정 api
+    public Member userUpdate(String id, String nick, String phone, String email, String addr) {
+        Member target = memberDAO.findById(id).orElse(null);
+        if(target != null) {
+            target.setNick(nick);
+            target.setPhone(phone);
+            target.setEmail(email);
+            target.setAddr(addr);
             return memberDAO.save(target);
         }
         return null;
