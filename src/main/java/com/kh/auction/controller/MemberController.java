@@ -43,8 +43,11 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<Member> userShow(@RequestBody String id) {
+
+    @GetMapping(value = "/users", produces = "application/json")
+    public ResponseEntity<Member> userShow(@AuthenticationPrincipal String id) {
+        Member member = new Member();
+        member.setId(id);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
     }
 
@@ -70,6 +73,7 @@ public class MemberController {
                 .name(registerMember.getName())
                 .addr(registerMember.getAddr())
                 .nick(registerMember.getNick())
+                .email(registerMember.getEmail())
                 .phone(registerMember.getPhone())
                 .sphone(registerMember.getSphone())
                 .build();
@@ -111,6 +115,7 @@ public class MemberController {
                     .name(member.getName())
                     .addr(member.getAddr())
                     .nick(member.getNick())
+                    .email(member.getEmail())
                     .phone(member.getPhone())
                     .sphone(member.getSphone())
                     .token(token)
