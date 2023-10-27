@@ -40,10 +40,8 @@ public class Member {
     @Column(name = "member_signup_date")
     private Date singupDate;
     @Column(name = "member_authority")
-    private int authority;
+    private String authority;
     @Column(name="member_point")
     private int point;
-
-
 
 }

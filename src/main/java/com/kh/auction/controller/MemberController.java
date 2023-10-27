@@ -4,12 +4,17 @@ import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Member;
 //import com.kh.auction.domain.MemberDTO;
 import com.kh.auction.domain.MemberDTO;
+import com.kh.auction.security.JwtAuthenticationFilter;
 import com.kh.auction.security.TokenProvider;
+import com.kh.auction.security.WebSecurityConfig;
 import com.kh.auction.service.MemberService;
+import lombok.With;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.apache.bcel.generic.RET;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +28,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/*")
 @CrossOrigin(origins={"*"}, maxAge = 6000)
+
 public class MemberController {
     @Autowired
     private TokenProvider tokenProvider;
@@ -35,16 +41,54 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.showAll());
     }
 
-    @GetMapping("/user")
+    @GetMapping("/user/show")
     public ResponseEntity<Member> show(@AuthenticationPrincipal String id) {
-        Member member = new Member();
-        member.setId(id);
+        Member member = memberService.show(id);
+        try{
+            if(member.getAuthority().equals("ROLE_USER")){
+                return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
+            }else{
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    }
+    // 유저들 회원가입
+    @PostMapping("/public/create")
+    public ResponseEntity UserCreate(@RequestBody MemberDTO dto) {
+        Member member = Member.builder()
+                .id(dto.getId())
+                .password(passwordEncoder.encode(dto.getPassword()))
+                .name(dto.getName())
+                .nick(dto.getNick())
+                .email(dto.getEmail())
+                .phone(dto.getPhone())
+                .sphone(dto.getSphone())
+                .addr(dto.getAddr())
+                .authority("ROLE_USER")
+                .build();
+        log.info("멤버"+member);
+        // 서비스를 이용해 리포지터리에 유저 저장
+        Member registerMember = memberService.create(member);
+        MemberDTO responseDTO = dto.builder()
+                .id(registerMember.getId())
+                .name(registerMember.getName())
+                .addr(registerMember.getAddr())
+                .nick(registerMember.getNick())
+                .phone(registerMember.getPhone())
 
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
+                .email(registerMember.getEmail())
+                .sphone(registerMember.getSphone())
+                .authority(registerMember.getAuthority())
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
 
-    @PostMapping("/public/create")
-    public ResponseEntity create(@RequestBody MemberDTO dto) {
+    // 어드민 회원가입
+    @PostMapping("/public/admin/create")
+    public ResponseEntity AdminCreate(@RequestBody MemberDTO dto) {
         Member vo = new Member();
         Member member = Member.builder()
                 .id(dto.getId())
@@ -55,8 +99,8 @@ public class MemberController {
                 .phone(dto.getPhone())
                 .sphone(dto.getSphone())
                 .addr(dto.getAddr())
+                .authority("ROLE_ADMIN")
                 .build();
-
         log.info("멤버"+member);
         // 서비스를 이용해 리포지터리에 유저 저장
         Member registerMember = memberService.create(member);
@@ -67,6 +111,7 @@ public class MemberController {
                 .nick(registerMember.getNick())
                 .phone(registerMember.getPhone())
                 .sphone(registerMember.getSphone())
+                .authority(registerMember.getAuthority())
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
     }
@@ -78,18 +123,14 @@ public class MemberController {
         try {
             boolean isDuplicate = memberService.duplicate(id) != null;
             log.info(id + (isDuplicate ? " 있는 아이디 입니다" : " 사용 가능한 아이디 입니다"));
-
             Map<String, Boolean> response = new HashMap<>(); // 혹은 boolean 클래스 만들어서 객체지향성 높이기
             response.put("isDuplicate", isDuplicate);
-
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-
 
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Member> delete(@PathVariable String id) {
@@ -110,6 +151,9 @@ public class MemberController {
                     .sphone(member.getSphone())
                     .token(token)
                     .point(member.getPoint())
+                    .authority(member.getAuthority())
+                    .email(member.getEmail())
+                    .singupDate(member.getSingupDate())
                     .build();
             return ResponseEntity.ok().body(responseDTO);
         }else {
@@ -118,7 +162,6 @@ public class MemberController {
 
 
     }
-
 
 
     // 포인트 api

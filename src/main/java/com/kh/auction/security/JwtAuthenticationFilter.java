@@ -1,9 +1,12 @@
 package com.kh.auction.security;
 
+import com.kh.auction.domain.Member;
+import com.kh.auction.service.MemberService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,11 +21,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter { // 한 번만 인증하는 필터
 
     @Autowired
     private TokenProvider tokenProvider;
-
+    @Autowired
+    private MemberService service;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 요청에서 토큰 가져오기
@@ -31,17 +36,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 한 번�
         if(token!=null && !token.equalsIgnoreCase("null")) {
             // Member -> id
             String id = tokenProvider.validateAndGetUserId(token);
-            // 인증 완료 SecurityContextHolder에 등록
-            AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    id, // 인증된 사용자 정보
-                    null,
-                    AuthorityUtils.NO_AUTHORITIES
-            );
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
-            securityContext.setAuthentication(authentication);
-            SecurityContextHolder.setContext(securityContext);
-        }
+            String authority = tokenProvider.validateAndGetUserAuthority(token);
+            log.info("jwt 토큰값 : " + token);
+            log.info(authority.equals("ROLE_USER")+"jwt 확인");
+            log.info("jwt 권한 : "+authority);
+            log.info(id);
+
+                // 사용자가 USER 권한인 경우
+                if (authority.equals("ROLE_USER")) {
+                    AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                            id, // 인증된 사용자 정보
+                            null,
+                            AuthorityUtils.NO_AUTHORITIES
+                    );
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
+                    securityContext.setAuthentication(authentication);
+                    SecurityContextHolder.setContext(securityContext);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                }
+            }
         filterChain.doFilter(request, response);
     }
 
@@ -53,4 +68,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 한 번�
         }
         return null;
     }
+
+
 }

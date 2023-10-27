@@ -35,7 +35,6 @@ public class MemberService {
 
     }
 
-
     // 포인트 api
     public Member update(String id, int point) {
         Member target = memberDAO.findById(id).orElse(null);

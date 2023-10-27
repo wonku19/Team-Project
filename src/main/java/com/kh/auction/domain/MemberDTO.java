@@ -38,7 +38,7 @@ public class MemberDTO {
 
     private Date singupDate;
 
-    private Date authority;
+    private String authority;
 
     private int point;
 
