@@ -166,4 +166,12 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
+
+    // 내 결제 기록 최신순
+//    @GetMapping("public/mypayList/new")
+//    public ResponseEntity<List<>>
+
+    // 내 결제 기록 페이지
+
+
 }
