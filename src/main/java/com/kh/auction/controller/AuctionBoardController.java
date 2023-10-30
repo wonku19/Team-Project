@@ -50,11 +50,6 @@ public class AuctionBoardController {
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-
-
-
-
-
     @GetMapping("/public/auction")
     public ResponseEntity<Map<String, Object>> BoardList(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -253,10 +248,31 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
-    @DeleteMapping("/auction/{no}")
-    public ResponseEntity<AuctionBoard> delete(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(auctionBoardService.delete(no));
+    @DeleteMapping("/user/auction/{no}")
+    public ResponseEntity<AuctionBoard> delete(@PathVariable int no, @AuthenticationPrincipal String id) {
+        // 사용자 인증 정보를 가져오고, 현재 로그인한 사용자의 아이디를 확인합니다.
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentUserId = id; // 현재 사용자의 아이디
+
+        // 경매 게시글을 조회하여 게시글 작성자의 아이디를 확인합니다.
+        AuctionBoard auctionBoard = auctionBoardService.show(no);
+        String postUserId = auctionBoard.getMemberId().getId(); // 게시글 작성자의 아이디
+
+        // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
+        if (currentUserId.equals(postUserId)) {
+            // 권한이 있는 경우, 게시글 삭제
+            AuctionBoard deletedAuction = auctionBoardService.delete(no);
+            if (deletedAuction != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(deletedAuction);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } else {
+            // 권한이 없는 경우, 403 Forbidden 응답을 반환
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
     }
+
     // 카테고리
     @GetMapping("/auction/{auctionNo}")
     public ResponseEntity<List<Category>> categoryList(@PathVariable int auctionNo){
@@ -300,6 +316,5 @@ public class AuctionBoardController {
         Integer result = auctionBoardService.countAuctionByMemberId(memberId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
-
 
 }

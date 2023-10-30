@@ -36,7 +36,7 @@ public class Comments {
     @JoinColumn(name="comment_parent", referencedColumnName = "comment_no", insertable = false, updatable = false)
     private Comments parent;
 
-//    @ManyToOne
+    //    @ManyToOne
 //    @JoinColumn(name="auction_no")
     @Column(name="auction_No")
     private int auctionNo;
