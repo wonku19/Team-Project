@@ -28,7 +28,7 @@ public class Member {
     @Column(name = "member_name")
     private String name;
     @Column(name = "member_birthday")
-    private int birthday;
+    private String birthday;
     @Column(name = "member_phone")
     private String phone; // 회원 전화번호
     @Column(name = "member_sphone")

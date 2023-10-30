@@ -9,6 +9,9 @@ import com.kh.auction.service.CommentsService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import jakarta.persistence.Column;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -55,12 +59,14 @@ public class AuctionBoardController {
 
 
 
-    @GetMapping("/public/auction")
+    @GetMapping(value = {"/public/auction/{categoryNo}" , "/public/auction"})
     public ResponseEntity<Map<String, Object>> BoardList(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "category", required = false) Integer category,
-            @RequestParam(name = "sortOption", defaultValue = "1") int sortOption
+            @RequestParam(name = "sortOption", defaultValue = "1") int sortOption,
+            @PathVariable(name = "categoryNo", required = false) Integer categoryNo
     ) {
+
         // 정렬 방식에 따라 Sort 객체 생성
         Sort sort = getSortForOption(sortOption);
 
@@ -76,10 +82,24 @@ public class AuctionBoardController {
 
         Page<AuctionBoard> result = auctionBoardService.showAll(pageable, builder);
 
+        List<AuctionBoard> auctionBoards = result.getContent();
         Map<String, Object> response = new HashMap<>();
-        response.put("totalPages", result.getTotalPages());
-        response.put("content", result.getContent());
-        log.info(""+ result.getContent());
+        List<AuctionBoard> categoryResults = new ArrayList<>();
+
+        for(AuctionBoard auctionBoard : auctionBoards){
+            int no = auctionBoard.getCategory().getCategoryNo();
+
+            if(categoryNo!=null && no == categoryNo){
+                categoryResults.add(auctionBoard);
+            }
+        }
+        if(!categoryResults.isEmpty()){
+            response.put("totalPages", result.getTotalPages());
+            response.put("content", categoryResults);
+        }else{
+            response.put("totalPages", result.getTotalPages());
+            response.put("content", result.getContent());
+        }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -102,14 +122,39 @@ public class AuctionBoardController {
 
     // 게시글 조회 / 조회수 +1
     @GetMapping("/user/auction/{no}")
-    public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
+    public ResponseEntity<AuctionBoard> show(@PathVariable int no, HttpServletResponse response) {
         AuctionBoard auctionBoard = auctionBoardService.show(no);
+
         if (auctionBoard != null) {
+            // 쿠키 생성 및 추가
+            Cookie cookie = new Cookie("recentlyView" + no, auctionBoard.getAuctionTitle());
+            cookie.setMaxAge(24 * 60 * 60 * 60);
+            response.addCookie(cookie);
             auctionBoardService.updateCheckNo(no);
             return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
+    }
+
+    @GetMapping("/user/recentView/{no}")
+    public ResponseEntity<List<AuctionBoard>> getRecentlyViewedAuctionPosts(@PathVariable int no, HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        List<AuctionBoard> recentlyViewed = new ArrayList<>();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().startsWith("recentlyView")) {
+                    int auctionNo = Integer.parseInt(cookie.getName().substring("recentlyView".length()));
+                    AuctionBoard auctionBoard = auctionBoardService.show(auctionNo);
+                    log.info(auctionNo+"옥션넘버");
+                    if (auctionBoard != null) {
+                        recentlyViewed.add(auctionBoard);
+                    }
+                }
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(recentlyViewed);
     }
 
     // 경매 입찰하기 / 입찰횟수 +1

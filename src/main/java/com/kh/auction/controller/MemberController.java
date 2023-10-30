@@ -8,6 +8,7 @@ import com.kh.auction.security.JwtAuthenticationFilter;
 import com.kh.auction.security.TokenProvider;
 import com.kh.auction.security.WebSecurityConfig;
 import com.kh.auction.service.MemberService;
+import jakarta.servlet.http.Cookie;
 import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.apache.bcel.generic.RET;
@@ -67,6 +68,7 @@ public class MemberController {
                 .phone(dto.getPhone())
                 .sphone(dto.getSphone())
                 .addr(dto.getAddr())
+                .birthday(dto.getBirthday())
                 .authority("ROLE_USER")
                 .build();
         log.info("멤버"+member);
@@ -160,10 +162,26 @@ public class MemberController {
             return ResponseEntity.badRequest().build();
         }
 
-
     }
 
 
+    // 비밀번호 수정
+    @PutMapping("/public/updatePassword")
+    public ResponseEntity<Member> updatePassword(@RequestBody MemberDTO dto){
+        String id = dto.getId();
+        String password = dto.getPassword();
+        String birthday = dto.getBirthday();
+        Member existMember = memberService.show(id);
+        if(existMember !=null){
+            if(existMember.getBirthday().equals(birthday)){
+                existMember.setPassword(password);
+                Member result = memberService.passwordUpdate(id,password);
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+
+    }
     // 포인트 api
     @PutMapping("/user/point")
     public ResponseEntity<Member> updatePoint(@AuthenticationPrincipal String id, @RequestBody Member member) {

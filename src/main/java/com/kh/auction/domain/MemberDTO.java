@@ -26,7 +26,7 @@ public class MemberDTO {
 
     private String name;
 
-    private int birthday;
+    private String birthday;
 
     private String phone; // 회원 전화번호
 
