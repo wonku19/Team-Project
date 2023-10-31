@@ -239,7 +239,7 @@ public class AuctionBoardController {
 
 //    }
 
-    @PutMapping("/public/auction")
+    @PutMapping("/user/auction/update/{no}")
     public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
         AuctionBoard result = auctionBoardService.update(auctionBoard);
         if (result != null) {
