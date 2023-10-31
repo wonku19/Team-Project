@@ -34,8 +34,6 @@ public class QComments extends EntityPathBase<Comments> {
 
     public final QMember memberId;
 
-    public final QComments parent;
-
     public QComments(String variable) {
         this(Comments.class, forVariable(variable), INITS);
     }
@@ -55,7 +53,6 @@ public class QComments extends EntityPathBase<Comments> {
     public QComments(Class<? extends Comments> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
         this.memberId = inits.isInitialized("memberId") ? new QMember(forProperty("memberId")) : null;
-        this.parent = inits.isInitialized("parent") ? new QComments(forProperty("parent"), inits.get("parent")) : null;
     }
 
 }

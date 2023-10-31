@@ -7,3 +7,5 @@ public interface MemberDAO extends JpaRepository<Member, String> {
 
 
 }
+
+

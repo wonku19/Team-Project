@@ -22,9 +22,9 @@ public class QReplies extends EntityPathBase<Replies> {
 
     public static final QReplies replies = new QReplies("replies");
 
-    public final QAuctionBoard auctionNo;
+    public final NumberPath<Integer> auctionNo = createNumber("auctionNo", Integer.class);
 
-    public final QComments commentNo;
+    public final NumberPath<Integer> commentNo = createNumber("commentNo", Integer.class);
 
     public final QMember memberId;
 
@@ -52,8 +52,6 @@ public class QReplies extends EntityPathBase<Replies> {
 
     public QReplies(Class<? extends Replies> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.auctionNo = inits.isInitialized("auctionNo") ? new QAuctionBoard(forProperty("auctionNo"), inits.get("auctionNo")) : null;
-        this.commentNo = inits.isInitialized("commentNo") ? new QComments(forProperty("commentNo"), inits.get("commentNo")) : null;
         this.memberId = inits.isInitialized("memberId") ? new QMember(forProperty("memberId")) : null;
     }
 

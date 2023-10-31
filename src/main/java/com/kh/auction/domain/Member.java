@@ -45,5 +45,5 @@ public class Member {
     private int point;
 
 
-
 }
+

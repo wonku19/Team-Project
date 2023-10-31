@@ -157,6 +157,7 @@ public class MemberController {
         String email = member.getEmail();
         String addr = member.getAddr();
         Member existMember = memberService.show(id);
+
         existMember.setNick(nick);
         existMember.setPhone(phone);
         existMember.setEmail(email);

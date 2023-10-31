@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auctionBoard/*")
+@CrossOrigin(origins={"*"}, maxAge = 6000)
 public class InterestController {
 
     @Autowired

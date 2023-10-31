@@ -1,15 +1,11 @@
 package com.kh.auction.service;
 
-import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Comments;
 import com.kh.auction.domain.QComments;
 import com.kh.auction.repo.CommentsDAO;
-import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +13,7 @@ import java.util.List;
 
 
 @Service
+@Slf4j
 public class CommentsService {
 
     @Autowired
@@ -25,7 +22,7 @@ public class CommentsService {
     @Autowired(required = true)
     private JPAQueryFactory queryFactory;
 
-    private final QComments QComments = com.kh.auction.domain.QComments.comments;
+    private final com.kh.auction.domain.QComments QComments = com.kh.auction.domain.QComments.comments;
 
     // 게시글 1개에 따른 댓글 전체 조회
     public List<Comments> boardCommentsList(int no) {
@@ -56,8 +53,10 @@ public class CommentsService {
     public Comments delete(int id) {
         Comments data = commentsDAO.findById(id).orElse(null);
         commentsDAO.delete(data);
+        log.info(data+"★");
         return data;
     }
+
 
 
     public List<Comments> findByComments(int id) {
@@ -66,7 +65,7 @@ public class CommentsService {
 
     public List<Comments> getAllTopLevelComments(int auctionNo) {
         return queryFactory.selectFrom(QComments)
-                .where(QComments.parent.isNull())
+                .where(QComments.commentParent.isNull())
                 .where(QComments.auctionNo.eq(auctionNo))
                 .orderBy(QComments.commentDate.desc())
                 .fetch();
@@ -76,6 +75,14 @@ public class CommentsService {
         return queryFactory.selectFrom(QComments)
                 .where(QComments.commentParent.eq(parentId))
                 .where(QComments.auctionNo.eq(auctionNo))
+                .orderBy(QComments.commentDate.asc())
+                .fetch();
+    }
+
+    public List<Comments> getreCommentId(int parentId, int auctionNo) {
+        return queryFactory.selectFrom(QComments)
+                .where(QComments.commentParent.eq(parentId)
+                .and(QComments.auctionNo.eq(auctionNo)))
                 .orderBy(QComments.commentDate.asc())
                 .fetch();
     }

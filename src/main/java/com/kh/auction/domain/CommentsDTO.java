@@ -17,7 +17,9 @@ public class CommentsDTO {
     private int commentNo;
     private String content;
     private Date commentDate;
+    private int commentParent;
     private int auctionNo;
     private Member member;
+    private int parent;
     private List<Comments> replies = new ArrayList<>();
 }

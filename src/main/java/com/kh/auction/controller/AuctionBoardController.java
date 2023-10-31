@@ -52,15 +52,17 @@ public class AuctionBoardController {
 
 
 
+    //@PostMapping(value = {"/user/recomment/{no}/{pno}" , "/user/recomment/{no}"})
 
 
-
-    @GetMapping("/public/auction")
+    @GetMapping(value = {"/public/auction/{categoryNo}" , "/public/auction"})
     public ResponseEntity<Map<String, Object>> BoardList(
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "category", required = false) Integer category,
-            @RequestParam(name = "sortOption", defaultValue = "1") int sortOption
+            @RequestParam(name = "sortOption", defaultValue = "1") int sortOption,
+            @PathVariable(name = "categoryNo", required = false) Integer categoryNo
     ) {
+
         // 정렬 방식에 따라 Sort 객체 생성
         Sort sort = getSortForOption(sortOption);
 
@@ -76,12 +78,33 @@ public class AuctionBoardController {
 
         Page<AuctionBoard> result = auctionBoardService.showAll(pageable, builder);
 
+        List<AuctionBoard> auctionBoards = result.getContent();
         Map<String, Object> response = new HashMap<>();
-        response.put("totalPages", result.getTotalPages());
-        response.put("content", result.getContent());
-        log.info(""+ result.getContent());
+        List<AuctionBoard> categoryResults = new ArrayList<>();
+
+        for(AuctionBoard auctionBoard : auctionBoards){
+            int no = auctionBoard.getCategory().getCategoryNo();
+
+
+            if (categoryNo != null && no == categoryNo) {
+                categoryResults.add(auctionBoard);
+            }
+        }
+        if(!categoryResults.isEmpty()){
+
+            response.put("totalPages", result.getTotalPages());
+            response.put("content", categoryResults);
+
+        }else{
+            response.put("totalPages", result.getTotalPages());
+            response.put("content", result.getContent());
+        }
         return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
+
+
+
 
     private Sort getSortForOption(int sortOption) {
         switch (sortOption) {
