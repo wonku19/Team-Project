@@ -24,9 +24,9 @@ public class QInterest extends EntityPathBase<Interest> {
 
     public final QAuctionBoard auctionNo;
 
-    public final QMember memberId;
+    public final NumberPath<Integer> interest_no = createNumber("interest_no", Integer.class);
 
-    public final NumberPath<Integer> postNo = createNumber("postNo", Integer.class);
+    public final QMember memberId;
 
     public QInterest(String variable) {
         this(Interest.class, forVariable(variable), INITS);
