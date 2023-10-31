@@ -43,6 +43,7 @@ public class MemberService {
         }
         return null;
     }
+
     // 포인트 api
     public Member update(String id, int point) {
         Member target = memberDAO.findById(id).orElse(null);
@@ -82,12 +83,4 @@ public class MemberService {
         return null;
     }
 
-    public Member passwordUpdate(String id, String password){
-        Member target = memberDAO.findById(id).orElse(null);
-        if(target !=null){
-            target.setPassword(password);
-            return memberDAO.save(target);
-        }
-        return null;
-    }
 }

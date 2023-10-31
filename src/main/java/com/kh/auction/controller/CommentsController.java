@@ -47,6 +47,7 @@ public class CommentsController {
     public ResponseEntity<Comments> update(@AuthenticationPrincipal String id, @RequestBody Comments comments) {
         Member member =new Member();
         member.setId(id);
+
         comments.setMemberId(member);
         return ResponseEntity.status(HttpStatus.OK).body(service.update(comments));
     }

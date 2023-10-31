@@ -25,29 +25,29 @@ public class InterestController {
     private MemberService memberService;
 
     // 게시글 관심 등록 : POST - http://localhost:8080/api/user/addList
-    @PostMapping("/user/addList")
-    public ResponseEntity<Interest> addList(@RequestBody Interest vo, @AuthenticationPrincipal String id, @RequestBody AuctionBoard auctionNo) {
-        Member existMember = memberService.show(id);
-        vo.setMemberId(existMember);
-        vo.setAuctionNo(auctionNo);
-
-        return ResponseEntity.status(HttpStatus.OK).body(interestService.create(vo));
-    }
+//    @PostMapping("/user/addList")
+//    public ResponseEntity<Interest> addList(@RequestBody Interest vo, @AuthenticationPrincipal String id, @RequestBody AuctionBoard auctionNo) {
+//        Member existMember = memberService.show(id);
+//        vo.setMemberId(existMember);
+//        vo.setAuctionNo(auctionNo);
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(interestService.create(vo));
+//    }
 
     // 게시글 관심 등록 취소 : DELETE - http://localhost:8080/api/auctionBoard/interest/{id}
-    @DeleteMapping("/user/deleteList")
-    public ResponseEntity<Interest> delete(@RequestBody int no, @AuthenticationPrincipal String id) {
-        Interest vo = new Interest();
-
-        Member existMember = memberService.show(id);
-
-        if(vo.getMemberId().equals(existMember)) {
-            if(vo.getInterest_no() == no) {
-                return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(vo.getInterest_no()));
-            }
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-    }
+//    @DeleteMapping("/user/deleteList")
+//    public ResponseEntity<Interest> delete(@RequestBody int no, @AuthenticationPrincipal String id) {
+//        Interest vo = new Interest();
+//
+//        Member existMember = memberService.show(id);
+//
+//        if(vo.getMemberId().equals(existMember)) {
+//            if(vo.getInterest_no() == no) {
+//                return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(vo.getInterest_no()));
+//            }
+//        }
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//    }
 
 
 
