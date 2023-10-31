@@ -35,7 +35,7 @@ public class Comments {
 //    @Column(name="comment_parent")
 //    private int parent;
 
-//    @ManyToOne
+    //    @ManyToOne
 //    @JoinColumn(name="auction_no")
     @Column(name="auction_No")
     private int auctionNo;
