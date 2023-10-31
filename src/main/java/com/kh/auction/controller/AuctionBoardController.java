@@ -243,7 +243,7 @@ public class AuctionBoardController {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
             calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-//            calendar.add(Calendar.MINUTE, 1); // 테스트
+//            calendar.add(Calendar.MINUTE, 120); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
 
             Member member = new Member();
@@ -446,8 +446,8 @@ public class AuctionBoardController {
     public ResponseEntity<List<AuctionBoard>> HotList() {
 
         try {
-            // 결과를 8개로 제한
-            List<AuctionBoard> result = auctionBoardService.findByHot(8);
+            // 결과를 10개로 제한
+            List<AuctionBoard> result = auctionBoardService.findByHot(10);
             log.info(""+result);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }catch (Exception e){
@@ -461,8 +461,8 @@ public class AuctionBoardController {
     @GetMapping("/public/auction/new")
     public ResponseEntity<List<AuctionBoard>> NewList() {
         try {
-            // 결과를 8개로 제한
-            List<AuctionBoard> result = auctionBoardService.findByNew(8);
+            // 결과를 10개로 제한
+            List<AuctionBoard> result = auctionBoardService.findByNew(10);
             log.info(""+result);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }catch (Exception e){
