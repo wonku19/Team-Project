@@ -7,6 +7,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.CorsFilter;
 
@@ -21,7 +23,6 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests();
-
         http.cors()
                 .and()
                 .csrf().disable()
@@ -31,6 +32,7 @@ public class WebSecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .requestMatchers(new AntPathRequestMatcher("/api/user/**")).authenticated()
+                .requestMatchers(new AntPathRequestMatcher(("/api/admin/**"))).authenticated()
                 .requestMatchers(new AntPathRequestMatcher("/api/public/**")).permitAll()
                 .anyRequest().authenticated();
 

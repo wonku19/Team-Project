@@ -26,7 +26,7 @@ public class MemberDTO {
 
     private String name;
 
-    private int birthday;
+    private String birthday;
 
     private String phone; // 회원 전화번호
 
@@ -38,7 +38,7 @@ public class MemberDTO {
 
     private Date singupDate;
 
-    private Date authority;
+    private String authority;
 
     private int point;
 

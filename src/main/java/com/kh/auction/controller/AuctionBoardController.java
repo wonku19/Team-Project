@@ -3,12 +3,18 @@ package com.kh.auction.controller;
 import com.kh.auction.domain.*;
 import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
+import com.kh.auction.repo.AuctionBoardDAO;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
-import com.kh.auction.service.CommentsService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import jakarta.persistence.Column;
+
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +59,7 @@ public class AuctionBoardController {
 
 
 
-    //@PostMapping(value = {"/user/recomment/{no}/{pno}" , "/user/recomment/{no}"})
+
 
 
     @GetMapping(value = {"/public/auction/{categoryNo}" , "/public/auction"})
@@ -85,26 +92,19 @@ public class AuctionBoardController {
         for(AuctionBoard auctionBoard : auctionBoards){
             int no = auctionBoard.getCategory().getCategoryNo();
 
-
-            if (categoryNo != null && no == categoryNo) {
+            if(categoryNo!=null && no == categoryNo){
                 categoryResults.add(auctionBoard);
             }
         }
         if(!categoryResults.isEmpty()){
-
             response.put("totalPages", result.getTotalPages());
             response.put("content", categoryResults);
-
         }else{
             response.put("totalPages", result.getTotalPages());
             response.put("content", result.getContent());
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
-
     }
-
-
-
 
     private Sort getSortForOption(int sortOption) {
         switch (sortOption) {
@@ -125,15 +125,46 @@ public class AuctionBoardController {
 
     // 게시글 조회 / 조회수 +1
     @GetMapping("/user/auction/{no}")
-    public ResponseEntity<AuctionBoard> show(@PathVariable int no) {
+    public ResponseEntity<AuctionBoard> show(@PathVariable int no, HttpServletResponse response) {
         AuctionBoard auctionBoard = auctionBoardService.show(no);
         if (auctionBoard != null) {
+            // 쿠키 생성 및 추가
+//            String[] imagePaths = auctionBoard.getAuctionImg().split(",", 0);
+//            Cookie cookie = new Cookie("recentlyView_" + no, imagePaths[0]);
+//
+//            log.info(auctionBoard.getAuctionImg());
+//            cookie.setMaxAge(24 * 60 * 60 );
+//            response.addCookie(cookie);
             auctionBoardService.updateCheckNo(no);
+
             return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
+
+    @GetMapping("/user/recentView")
+    public ResponseEntity<List<AuctionBoard>> getRecentlyView(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        List<AuctionBoard> auctionBoards = new ArrayList<>();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+
+                if (cookie.getName().startsWith("recentlyView_")) {
+
+                    int auctionNo = Integer.parseInt(cookie.getName().substring(("recentlyView_").length()));
+                    AuctionBoard auctionBoard = auctionBoardService.show(auctionNo);
+
+                    if (auctionBoard != null) {
+                        auctionBoards.add(auctionBoard);
+                    }
+                }
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoards);
+    }
+
 
     // 경매 입찰하기 / 입찰횟수 +1
     @PutMapping("/user/auction/{auctionNo}")
