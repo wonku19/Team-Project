@@ -13,4 +13,5 @@ public interface CommentsDAO extends JpaRepository<Comments, Integer> {
     @Query(value = "SELECT * FROM comments WHERE auction_no = :no", nativeQuery = true)
     List<Comments> findByBoardComments(int no);
 
+
 }

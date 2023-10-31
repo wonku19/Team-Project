@@ -3,7 +3,9 @@ package com.kh.auction.controller;
 import com.kh.auction.domain.Comments;
 import com.kh.auction.domain.CommentsDTO;
 import com.kh.auction.domain.Member;
+import com.kh.auction.domain.Replies;
 import com.kh.auction.service.CommentsService;
+import com.kh.auction.service.MemberService;
 import jakarta.persistence.Column;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +27,11 @@ public class CommentsController {
     @Autowired
     private CommentsService service;
 
-    @Column(name="comment_desc")
-    private String commentDesc;
-
-    @Column(name="comment_date")
-    private Date commentDate;
-
-    @Column(name="auction_No")
-    private int auctioNo;
-
     @Autowired
     private CommentsService comment;
 
+    @Autowired
+    private MemberService memberService;
 
     // 게시글 1개에 따른 댓글 전체 조회 : GET - http://localhost:8080/api/auctionBoard/{id}/comments
 
@@ -48,32 +43,21 @@ public class CommentsController {
     }
 
     // 댓글 수정 : PUT - http://localhost:8080/api/auctionBoard/comments
-    @PutMapping("/comments")
-    public ResponseEntity<Comments> update(@RequestBody Comments comments) {
-        Comments result = service.update(comments);
-        if (result != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(service.update(result));
-        }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    @PutMapping("/user/comments")
+    public ResponseEntity<Comments> update(@AuthenticationPrincipal String id, @RequestBody Comments comments) {
+        Member member =new Member();
+        member.setId(id);
+        comments.setMemberId(member);
+        return ResponseEntity.status(HttpStatus.OK).body(service.update(comments));
     }
 
-    // 댓글 삭제 : DELETE - http://localhost:8080/api/auctionBoard/comments/{id}
-    @DeleteMapping("/comments/{id}")
-    public ResponseEntity<Comments> delete(@PathVariable int id) {
-        return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
+
+    // 댓글 삭제 : DELETE - http://localhost:8080/api/video/comment/1
+    @DeleteMapping("/user/comment/{id}")
+    public ResponseEntity<Comments> deleteComment(@PathVariable int id) {
+        log.info(id+"★");
+        return ResponseEntity.status(HttpStatus.OK).body(comment.delete(id));
     }
-
-    // 댓글 좋아요 추가 : POST - http://localhost:8080/api/auctionBoard/comments/like
-//    @PostMapping("/comments/like")
-//    public ResponseEntity<CommentsLike> createCommentsLike(@PathVariable CommentsLike like) {
-//        return  ResponseEntity.status(HttpStatus.OK).body(likeService.create(like));
-//    }
-
-    // 댓글 좋아요 취소 : DELETE - http://localhost:8080/api/auctionBoard/comments/like/{id}
-//    @DeleteMapping("/comments/like/{id}")
-//    public ResponseEntity<CommentsLike> deleteCommentsLike(@PathVariable String id) {
-//        return ResponseEntity.status(HttpStatus.OK).body(likeService.delect(id));
-//    }
 
 
     @GetMapping("/comments")
@@ -89,7 +73,7 @@ public class CommentsController {
     @GetMapping("/public/{id}/comment")
     public ResponseEntity<List<CommentsDTO>> videoCommentList(@PathVariable int id) {
         List<Comments> topList = comment.getAllTopLevelComments(id);
-        log.info("top : " + topList);
+//        log.info("top : " + topList);
 
         List<CommentsDTO> response = new ArrayList<>();
 
@@ -105,6 +89,24 @@ public class CommentsController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+    @GetMapping("/public/{pno}/{id}/recomment")
+    public ResponseEntity<List<CommentsDTO>> videoreCommentList(@PathVariable int pno, @PathVariable int id) {
+        List<Comments> recomments = comment.getreCommentId(pno, id);
+        List<CommentsDTO> response = new ArrayList<>();
+
+        for (Comments item : recomments) {
+            CommentsDTO dto = new CommentsDTO();
+            dto.setAuctionNo(item.getAuctionNo());
+            dto.setCommentNo(item.getCommentNo());
+            dto.setContent(item.getContent());
+            dto.setMember(item.getMemberId());
+            dto.setParent(item.getCommentParent());
+            response.add(dto);
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+    //댓글 작성
     @PostMapping("/user/comment/{no}")
     public ResponseEntity<Comments> createComment(@RequestBody Comments vo, @AuthenticationPrincipal String id, @PathVariable int no) {
         Member member = new Member();
@@ -112,6 +114,18 @@ public class CommentsController {
         vo.setMemberId(member);
         vo.setAuctionNo(no);
         return ResponseEntity.status(HttpStatus.OK).body(comment.create(vo));
+    }
+
+    @PostMapping(value = {"/user/recomment/{no}/{pno}" , "/user/recomment/{no}"})
+    public ResponseEntity<Comments> createComment(@RequestBody Comments vo, @AuthenticationPrincipal String id, @PathVariable int no, @PathVariable(required = false) Integer pno) {
+        Member member = new Member();
+        member.setId(id);
+        vo.setMemberId(member);
+        vo.setAuctionNo(no);
+        vo.setCommentParent(pno);
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(service.create(vo));
     }
 
 }

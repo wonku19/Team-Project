@@ -31,10 +31,9 @@ public class Comments {
     @Column(name="comment_parent")
     private Integer commentParent;
 
-    @JsonIgnore
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="comment_parent", referencedColumnName = "comment_no", insertable = false, updatable = false)
-    private Comments parent;
+
+//    @Column(name="comment_parent")
+//    private int parent;
 
 //    @ManyToOne
 //    @JoinColumn(name="auction_no")

@@ -27,16 +27,14 @@ public class Replies {
     @Column(name = "reply_date")
     private Date replyDate;
 
-    @ManyToOne
-    @JoinColumn(name="auction_no")
-    private AuctionBoard auctionNo;
+    @Column(name="auction_No")
+    private int auctionNo;
 
     @ManyToOne
     @JoinColumn(name="member_id")
     private Member memberId;
 
-    @ManyToOne
-    @JoinColumn(name="comment_no")
-    private Comments commentNo;
+    @Column(name="comment_No")
+    private int commentNo;
 
 }

@@ -16,7 +16,7 @@ public class Category {
     @Column(name = "category_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "categorySeq")
     @SequenceGenerator(name = "categorySeq", sequenceName = "SEQ_MAIN_CATEGORY", allocationSize = 1)
-    private int categoryNo;
+    private Integer categoryNo;
 
     @Column(name = "category_name")
     private String categoryName;

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryDTO {
-    private int categoryNo;
+    private Integer categoryNo;
     private String categoryName;
     private AuctionBoard auctionNo;
 }
