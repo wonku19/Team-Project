@@ -14,10 +14,10 @@ import org.hibernate.annotations.DynamicInsert;
 public class Interest {
 
     @Id
-    @Column(name = "post_no")
+    @Column(name = "interest_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "interestSequence")
     @SequenceGenerator(name = "interestSequence", sequenceName = "SEQ_INTEREST", allocationSize = 1)
-    private int postNo;
+    private int interest_no;
 
     @ManyToOne
     @JoinColumn(name="member_id")

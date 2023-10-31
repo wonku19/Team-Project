@@ -14,8 +14,8 @@ public class InterestService {
     private InterestDAO interestDAO;
 
     // 게시글 관심 등록
-    public Interest create(Interest interest) {
-        return interestDAO.save(interest);
+    public Interest create(Interest vo) {
+        return interestDAO.save(vo);
     }
 
     // 게시글 관심 등록 취소

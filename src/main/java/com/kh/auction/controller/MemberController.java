@@ -204,13 +204,6 @@ public class MemberController {
     }
 
 
-    // 관심목록 추가
-//    @PostMapping("/user/addList")
-//    public ResponseEntity<Member> addList(@AuthenticationPrincipal String id, @PathVariable int auctionNo) {
-//
-//        //        return ResponseEntity.status(HttpStatus.OK).body(memberService.create());
-//    }
-
 
     // 포인트 충전 내역
 //    @PutMapping("/user/pointAdd")
