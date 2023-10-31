@@ -104,6 +104,7 @@ public class MemberController {
     public ResponseEntity<Member> delete(@PathVariable String id) {
         return ResponseEntity.status(HttpStatus.OK).body(memberService.delete(id));
     }
+
     @PostMapping("/public/signin")
     public ResponseEntity authenticate(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
@@ -145,6 +146,8 @@ public class MemberController {
         }
     }
 
+
+
     // 내 정보 수정 api
     @PutMapping("/user/updateuser")
     public ResponseEntity<Member> updateUser(@AuthenticationPrincipal String id , @RequestBody Member member) {
@@ -167,11 +170,58 @@ public class MemberController {
     }
 
 
+    // 비밀번호 확인
+    @PostMapping("/user/pwdChack")
+    public ResponseEntity<Member> chackPassword(@AuthenticationPrincipal String id ,@RequestBody MemberDTO dto) {
+        Member existMember = memberService.show(id);
+        String password = dto.getPassword();
+        if(existMember.getPassword() !=null){
+            if(existMember.getPassword().equals(password)){
+                existMember.setPassword(password);
+            Member result = memberService.passwordUpdate(id,password);
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+
+    // 비밀번호 변경
+    @PutMapping("/user/pwdUp")
+    public ResponseEntity<Member> updatePassword(@AuthenticationPrincipal String id ,@RequestBody MemberDTO dto){
+        Member existMember = memberService.show(id);
+        String password = dto.getPassword();
+        if(existMember.getPassword() !=null){
+//            if(existMember.getPassword().equals(password)){
+//                existMember.setPassword(password);
+                Member result = memberService.passwordUpdate(id,password);
+                result.setPassword(passwordEncoder.encode(dto.getPassword()));
+                return ResponseEntity.status(HttpStatus.OK).body(result);
+//            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).build();
+
+    }
+
+
+    // 관심목록 추가
+//    @PostMapping("/user/addList")
+//    public ResponseEntity<Member> addList(@AuthenticationPrincipal String id, @PathVariable int auctionNo) {
+//
+//        //        return ResponseEntity.status(HttpStatus.OK).body(memberService.create());
+//    }
+
+
+    // 포인트 충전 내역
+//    @PutMapping("/user/pointAdd")
+//    public ResponseEntity
+
     // 내 결제 기록 최신순
 //    @GetMapping("public/mypayList/new")
 //    public ResponseEntity<List<>>
 
-    // 내 결제 기록 페이지
-
+    // 결제 기록 페이지
+//    @GetMapping("/user/pointList")
+//    public ResponseEntity<>
 
 }

@@ -74,4 +74,13 @@ public class MemberService {
         }
         return null;
     }
+
+    public Member passwordUpdate(String id, String password){
+        Member target = memberDAO.findById(id).orElse(null);
+        if(target !=null){
+            target.setPassword(password);
+            return memberDAO.save(target);
+        }
+        return null;
+    }
 }
