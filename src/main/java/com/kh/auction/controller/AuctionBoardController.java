@@ -129,12 +129,12 @@ public class AuctionBoardController {
         AuctionBoard auctionBoard = auctionBoardService.show(no);
         if (auctionBoard != null) {
             // 쿠키 생성 및 추가
-            String[] imagePaths = auctionBoard.getAuctionImg().split(",", 0);
-            Cookie cookie = new Cookie("recentlyView_" + no, imagePaths[0]);
-
-            log.info(auctionBoard.getAuctionImg());
-            cookie.setMaxAge(24 * 60 * 60 );
-            response.addCookie(cookie);
+//            String[] imagePaths = auctionBoard.getAuctionImg().split(",", 0);
+//            Cookie cookie = new Cookie("recentlyView_" + no, imagePaths[0]);
+//
+//            log.info(auctionBoard.getAuctionImg());
+//            cookie.setMaxAge(24 * 60 * 60 );
+//            response.addCookie(cookie);
             auctionBoardService.updateCheckNo(no);
 
             return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
