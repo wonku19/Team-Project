@@ -1,6 +1,7 @@
 package com.kh.auction.service;
 
 import com.kh.auction.domain.AuctionBoard;
+import com.kh.auction.domain.Delivery;
 import com.kh.auction.domain.Member;
 import com.kh.auction.repo.AuctionBoardDAO;
 import com.querydsl.core.BooleanBuilder;
@@ -30,6 +31,9 @@ public class AuctionBoardService {
         return auctionBoardDAO.findAll(builder, pageable);
     }
 
+    public List<AuctionBoard> showAll(){
+        return auctionBoardDAO.findAll();
+    }
 
     public Page<AuctionBoard> Search(String keyword, Pageable pageable){
         return auctionBoardDAO.findByAuctionTitleContaining(keyword, pageable);

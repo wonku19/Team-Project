@@ -3,15 +3,18 @@ package com.kh.auction.controller;
 import com.kh.auction.domain.*;
 import com.kh.auction.domain.AuctionBoard;
 import com.kh.auction.domain.Category;
+import com.kh.auction.repo.AuctionBoardDAO;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.CategoryService;
-import com.kh.auction.service.CommentsService;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import jakarta.persistence.Column;
+
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -124,38 +127,44 @@ public class AuctionBoardController {
     @GetMapping("/user/auction/{no}")
     public ResponseEntity<AuctionBoard> show(@PathVariable int no, HttpServletResponse response) {
         AuctionBoard auctionBoard = auctionBoardService.show(no);
-
         if (auctionBoard != null) {
             // 쿠키 생성 및 추가
-            Cookie cookie = new Cookie("recentlyView" + no, auctionBoard.getAuctionTitle());
-            cookie.setMaxAge(24 * 60 * 60 * 60);
+            String[] imagePaths = auctionBoard.getAuctionImg().split(",", 0);
+            Cookie cookie = new Cookie("recentlyView_" + no, imagePaths[0]);
+
+            log.info(auctionBoard.getAuctionImg());
+            cookie.setMaxAge(24 * 60 * 60 );
             response.addCookie(cookie);
             auctionBoardService.updateCheckNo(no);
+
             return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }
 
-    @GetMapping("/user/recentView/{no}")
-    public ResponseEntity<List<AuctionBoard>> getRecentlyViewedAuctionPosts(@PathVariable int no, HttpServletRequest request) {
+    @GetMapping("/user/recentView")
+    public ResponseEntity<List<AuctionBoard>> getRecentlyView(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
-        List<AuctionBoard> recentlyViewed = new ArrayList<>();
+        List<AuctionBoard> auctionBoards = new ArrayList<>();
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                if (cookie.getName().startsWith("recentlyView")) {
-                    int auctionNo = Integer.parseInt(cookie.getName().substring("recentlyView".length()));
+
+                if (cookie.getName().startsWith("recentlyView_")) {
+
+                    int auctionNo = Integer.parseInt(cookie.getName().substring(("recentlyView_").length()));
                     AuctionBoard auctionBoard = auctionBoardService.show(auctionNo);
-                    log.info(auctionNo+"옥션넘버");
+
                     if (auctionBoard != null) {
-                        recentlyViewed.add(auctionBoard);
+                        auctionBoards.add(auctionBoard);
                     }
                 }
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).body(recentlyViewed);
+        return ResponseEntity.status(HttpStatus.OK).body(auctionBoards);
     }
+
 
     // 경매 입찰하기 / 입찰횟수 +1
     @PutMapping("/user/auction/{auctionNo}")

@@ -37,10 +37,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 한 번�
             // Member -> id
             String id = tokenProvider.validateAndGetUserId(token);
             String authority = tokenProvider.validateAndGetUserAuthority(token);
-            log.info("jwt 토큰값 : " + token);
-            log.info(authority.equals("ROLE_USER")+"jwt 확인");
-            log.info("jwt 권한 : "+authority);
-            log.info(id);
 
                 // 사용자가 USER 권한인 경우
                 if (authority.equals("ROLE_USER")) {
