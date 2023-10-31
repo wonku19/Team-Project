@@ -239,15 +239,118 @@ public class AuctionBoardController {
 
 //    }
 
+//     게시글 수정 test 1
+//    @PutMapping("/user/auction/update/{no}")
+//    public ResponseEntity<AuctionBoard> update(@PathVariable int no, @AuthenticationPrincipal String id, @RequestBody AuctionBoard updatedAuction) {
+//        // 현재 로그인한 사용자의 아이디를 가져옵니다.
+//        String currentUserId = id;
+//
+//        // 경매 게시물을 조회하여 게시글 작성자의 아이디를 확인합니다.
+//        AuctionBoard existingAuction = auctionBoardService.show(no);
+//        String postUserId = existingAuction.getMemberId().getId();
+//
+//        // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
+//        if (currentUserId.equals(postUserId)) {
+//            // 권한이 있는 경우, 요청된 업데이트 수행
+//            existingAuction.setAuctionTitle(updatedAuction.getAuctionTitle());
+//            existingAuction.setItemName(updatedAuction.getItemName());
+//            existingAuction.setItemDesc(updatedAuction.getItemDesc());
+//            existingAuction.setAuctionSMoney(updatedAuction.getAuctionSMoney());
+//            existingAuction.setAuctionEMoney(updatedAuction.getAuctionEMoney());
+//            existingAuction.setAuctionNowbuy(updatedAuction.getAuctionNowbuy());
+//            existingAuction.setAuctionGMoney(updatedAuction.getAuctionGMoney());
+//            existingAuction.setAuctionEndDate(updatedAuction.getAuctionEndDate());
+//
+//            // 업데이트된 경매 게시물을 저장
+//            existingAuction = auctionBoardService.update(existingAuction); // 변수 이름 변경
+//
+//            if (existingAuction != null) {
+//                return ResponseEntity.status(HttpStatus.OK).body(existingAuction); // 변수 이름 변경
+//            } else {
+//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//            }
+//        } else {
+//            // 권한이 없는 경우, 403 Forbidden 응답을 반환
+//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+//        }
+//    }
+
+//    // 게시글 수정 test2
     @PutMapping("/user/auction/update/{no}")
-    public ResponseEntity<AuctionBoard> update(@RequestBody AuctionBoard auctionBoard) {
-        AuctionBoard result = auctionBoardService.update(auctionBoard);
-        if (result != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+    public ResponseEntity<AuctionBoard> update(@PathVariable int no, @AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
+        // 현재 로그인한 사용자의 아이디를 가져옵니다.
+        String currentUserId = id;
+
+        // 경매 게시물을 조회하여 게시글 작성자의 아이디를 확인합니다.
+        AuctionBoard existingAuction = auctionBoardService.show(no);
+        String postUserId = existingAuction.getMemberId().getId();
+
+        // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
+        if (!currentUserId.equals(postUserId)) {
+            // 권한이 없는 경우, 403 Forbidden 응답을 반환
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        // 이미지 경로를 저장할 변수
+        StringBuilder imagePaths = new StringBuilder();
+
+        try {
+            // 각 이미지 처리
+            for (MultipartFile image : images) {
+                String originalImage = image.getOriginalFilename();
+                String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
+                String uuid = UUID.randomUUID().toString();
+                String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
+                Path pathImage = Paths.get(saveImage);
+
+                // 이미지를 서버에 저장
+                image.transferTo(pathImage);
+
+                // 이미지 경로를 imagePaths에 추가
+                imagePaths.append(uuid).append("_").append(realImage).append(",");
+            }
+
+            // 마지막 쉼표 제거
+            if (imagePaths.length() > 0) {
+                imagePaths.deleteCharAt(imagePaths.length() - 1);
+            }
+
+            // 업데이트된 필드 설정
+            existingAuction.setAuctionTitle(title);
+            existingAuction.setItemName(itemName);
+            existingAuction.setItemDesc(desc);
+            existingAuction.setAuctionSMoney(sMoney);
+            existingAuction.setAuctionEMoney(eMoney);
+            existingAuction.setAuctionNowbuy(nowBuy);
+            existingAuction.setAuctionGMoney(gMoney);
+            existingAuction.setAuctionImg(imagePaths.toString());
+
+            Category category = new Category();
+            category.setCategoryNo(Integer.parseInt(categoryNo));
+
+            existingAuction.setCategory(category);
+
+            // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(existingAuction.getAuctionDate());
+            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+            existingAuction.setAuctionEndDate(calendar.getTime());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // 업데이트된 경매 게시물을 저장
+        AuctionBoard updatedAuction = auctionBoardService.update(existingAuction);
+
+        if (updatedAuction != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(updatedAuction);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
+    // 게시글 삭제
     @DeleteMapping("/user/auction/{no}")
     public ResponseEntity<AuctionBoard> delete(@PathVariable int no, @AuthenticationPrincipal String id) {
         // 사용자 인증 정보를 가져오고, 현재 로그인한 사용자의 아이디를 확인합니다.
