@@ -57,11 +57,6 @@ public class AuctionBoardController {
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-
-
-
-
-
     @GetMapping(value = {"/public/auction/{categoryNo}" , "/public/auction"})
     public ResponseEntity<Map<String, Object>> BoardList(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -165,7 +160,6 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoards);
     }
 
-
     // 경매 입찰하기 / 입찰횟수 +1
     @PutMapping("/user/auction/{auctionNo}")
     public ResponseEntity<AuctionBoard> placeBid(@PathVariable int auctionNo, @RequestBody AuctionBoard auction) {
@@ -242,7 +236,7 @@ public class AuctionBoardController {
             // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
-            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+            calendar.add(Calendar.DAY_OF_MONTH, 3); // 3일 추가
 //            calendar.add(Calendar.MINUTE, 1); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
 
@@ -294,55 +288,17 @@ public class AuctionBoardController {
         dto.setGetTotalPages(list.getTotalPages());
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
-//        return ResponseEntity.status(HttpStatus.OK).build();
 
-//    }
-
-//     게시글 수정 test 1
-//    @PutMapping("/user/auction/update/{no}")
-//    public ResponseEntity<AuctionBoard> update(@PathVariable int no, @AuthenticationPrincipal String id, @RequestBody AuctionBoard updatedAuction) {
-//        // 현재 로그인한 사용자의 아이디를 가져옵니다.
-//        String currentUserId = id;
-//
-//        // 경매 게시물을 조회하여 게시글 작성자의 아이디를 확인합니다.
-//        AuctionBoard existingAuction = auctionBoardService.show(no);
-//        String postUserId = existingAuction.getMemberId().getId();
-//
-//        // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
-//        if (currentUserId.equals(postUserId)) {
-//            // 권한이 있는 경우, 요청된 업데이트 수행
-//            existingAuction.setAuctionTitle(updatedAuction.getAuctionTitle());
-//            existingAuction.setItemName(updatedAuction.getItemName());
-//            existingAuction.setItemDesc(updatedAuction.getItemDesc());
-//            existingAuction.setAuctionSMoney(updatedAuction.getAuctionSMoney());
-//            existingAuction.setAuctionEMoney(updatedAuction.getAuctionEMoney());
-//            existingAuction.setAuctionNowbuy(updatedAuction.getAuctionNowbuy());
-//            existingAuction.setAuctionGMoney(updatedAuction.getAuctionGMoney());
-//            existingAuction.setAuctionEndDate(updatedAuction.getAuctionEndDate());
-//
-//            // 업데이트된 경매 게시물을 저장
-//            existingAuction = auctionBoardService.update(existingAuction); // 변수 이름 변경
-//
-//            if (existingAuction != null) {
-//                return ResponseEntity.status(HttpStatus.OK).body(existingAuction); // 변수 이름 변경
-//            } else {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//            }
-//        } else {
-//            // 권한이 없는 경우, 403 Forbidden 응답을 반환
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-//        }
-//    }
-
-//    // 게시글 수정 test2
+    // 게시글 수정
     @PutMapping("/user/auction/update/{no}")
     public ResponseEntity<AuctionBoard> update(@PathVariable int no, @AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
-        // 현재 로그인한 사용자의 아이디를 가져옵니다.
-        String currentUserId = id;
+        // 사용자 인증 정보를 가져오고, 현재 로그인한 사용자의 아이디를 확인합니다.
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentUserId = id; // 현재 사용자의 아이디
 
-        // 경매 게시물을 조회하여 게시글 작성자의 아이디를 확인합니다.
-        AuctionBoard existingAuction = auctionBoardService.show(no);
-        String postUserId = existingAuction.getMemberId().getId();
+        // 경매 게시글을 조회하여 게시글 작성자의 아이디를 확인합니다.
+        AuctionBoard auctionBoard = auctionBoardService.show(no);
+        String postUserId = auctionBoard.getMemberId().getId(); // 게시글 작성자의 아이디
 
         // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
         if (!currentUserId.equals(postUserId)) {
@@ -375,32 +331,26 @@ public class AuctionBoardController {
             }
 
             // 업데이트된 필드 설정
-            existingAuction.setAuctionTitle(title);
-            existingAuction.setItemName(itemName);
-            existingAuction.setItemDesc(desc);
-            existingAuction.setAuctionSMoney(sMoney);
-            existingAuction.setAuctionEMoney(eMoney);
-            existingAuction.setAuctionNowbuy(nowBuy);
-            existingAuction.setAuctionGMoney(gMoney);
-            existingAuction.setAuctionImg(imagePaths.toString());
+            auctionBoard.setAuctionTitle(title);
+            auctionBoard.setItemName(itemName);
+            auctionBoard.setItemDesc(desc);
+            auctionBoard.setAuctionSMoney(sMoney);
+            auctionBoard.setAuctionEMoney(eMoney);
+            auctionBoard.setAuctionNowbuy(nowBuy);
+            auctionBoard.setAuctionGMoney(gMoney);
+            auctionBoard.setAuctionImg(imagePaths.toString());
 
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
 
-            existingAuction.setCategory(category);
-
-            // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(existingAuction.getAuctionDate());
-            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-            existingAuction.setAuctionEndDate(calendar.getTime());
+            auctionBoard.setCategory(category);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         // 업데이트된 경매 게시물을 저장
-        AuctionBoard updatedAuction = auctionBoardService.update(existingAuction);
+        AuctionBoard updatedAuction = auctionBoardService.update(auctionBoard);
 
         if (updatedAuction != null) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedAuction);
