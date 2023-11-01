@@ -30,8 +30,6 @@ public class InterestService {
         return interestDAO.findByMemberId(id);
     }
 
-
-
     public List<Interest> showAll() {
         return interestDAO.findAll();
     }
