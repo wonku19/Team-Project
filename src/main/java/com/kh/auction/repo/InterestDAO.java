@@ -12,4 +12,9 @@ public interface InterestDAO extends JpaRepository<Interest, Integer> {
     // 자신이 관심 등록한 게시물 목록 조회 - SELECT * FROM interest WHERE id=?
     @Query(value = "SELECT * FROM interest WHERE member_id = :memberId", nativeQuery = true)
     List<Interest> findByMemberId(@Param("memberId") String id);
+
+    // 관심 등록한 게시물 해제
+    //DELETE FROM users WHERE id = 1
+    @Query(value = "DELETE FROM interest WHERE member_id = :memberId AND auction_no = :auctionNo", nativeQuery = true)
+    Interest deleteByDeleteList(@Param("memberId") String memberId, @Param("auctionNo") int auctionNo);
 }

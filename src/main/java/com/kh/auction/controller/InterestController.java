@@ -1,9 +1,6 @@
 package com.kh.auction.controller;
 
-import com.kh.auction.domain.AuctionBoard;
-import com.kh.auction.domain.Interest;
-import com.kh.auction.domain.InterestDTO;
-import com.kh.auction.domain.Member;
+import com.kh.auction.domain.*;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.InterestService;
 import com.kh.auction.service.MemberService;
@@ -46,18 +43,23 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.OK).body(interestService.create(vo));
     }
 
-    // 게시글 관심 등록 취소 : DELETE - http://localhost:8080/api/user/deleteList
-    @DeleteMapping("/user/deleteList")
-    public ResponseEntity<Interest> delete(@RequestBody int no, @AuthenticationPrincipal String id) {
-        Interest vo = new Interest();
 
-        Member existMember = memberService.show(id);
+    // 게시글 관심 등록 취소 : DELETE - http://localhost:8080/api/user/checkDelete
+//    @DeleteMapping("/user/checkDelete")
+//    public ResponseEntity<Interest> delete(@RequestBody int no) {
+//        return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(no));
+//    }
 
-        if(vo.getMember().equals(existMember)) {
-            if(vo.getInterestNo() == no) {
-                return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(vo.getInterestNo()));
-            }
+
+    // 게시글 관심 등록 한번에 취소 : DELETE - http://localhost:8080/api/user/checkDeleteList
+    @DeleteMapping("/user/checkDeleteList")
+    public ResponseEntity<Interest> checkAllDelete(@RequestParam List<Integer> list) {
+        log.info("ㅅㅂ");
+        log.info("시발" + list);
+        for(int no : list) {
+            interestService.delete(no);
         }
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 

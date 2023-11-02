@@ -19,10 +19,10 @@ public class InterestService {
     }
 
     // 게시글 관심 등록 취소
-    public Interest delete(int id) {
-        Interest data = interestDAO.findById(id).orElse(null);
-        interestDAO.delete(data);
-        return data;
+    public Interest delete(int no) {
+        Interest target = interestDAO.findById(no).orElse(null);
+        interestDAO.delete(target);
+        return target;
     }
 
     // 자신이 관심등록한 게시물 목록 조회
