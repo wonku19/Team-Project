@@ -168,7 +168,7 @@ public class AuctionBoardController {
 
     // 경매 입찰하기 / 입찰횟수 +1
     @PutMapping("/user/auction/{auctionNo}")
-    public ResponseEntity<AuctionBoard> placeBid(@PathVariable int auctionNo, @RequestBody AuctionBoard auction) {
+    public ResponseEntity<AuctionBoard> placeBid(@PathVariable int auctionNo, @RequestBody AuctionBoard auction , @AuthenticationPrincipal String id) {
         int price = auction.getCurrentPrice();
 
         // 경매 번호에 해당하는 경매 게시물을 조회
@@ -178,7 +178,8 @@ public class AuctionBoardController {
             // 현재 가격과 비교하여 유효한 입찰인 경우에만 업데이트
             if (price > auctionBoard.getCurrentPrice()) {
                 auctionBoard.setCurrentPrice(price); // 새로운 입찰 가격으로 설정
-                auctionBoardService.updatePrice(auctionNo, price);
+                auctionBoardService.updatePrice(auctionNo, price, id);
+                log.info(id);
                 auctionBoardService.updateCurrentNum(auctionNo); // 입찰 횟수 업데이트
                 return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
             } else {
@@ -230,6 +231,8 @@ public class AuctionBoardController {
             vo.setAuctionEMoney(eMoney);
             vo.setAuctionNowbuy(nowBuy);
             vo.setAuctionGMoney(gMoney);
+//            vo.setBuyerId(buyerId);
+//            vo.setBuyerPoint(buyerPoint);
             vo.setAuctionImg(imagePaths.toString());
 
             Category category = new Category();
@@ -242,8 +245,8 @@ public class AuctionBoardController {
             // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
-            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-//            calendar.add(Calendar.MINUTE, 1); // 테스트
+//            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
+            calendar.add(Calendar.MINUTE, 30); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
 
             Member member = new Member();
@@ -275,7 +278,7 @@ public class AuctionBoardController {
 
         // required = false 를 주지 않았을땐 오류 났음
         Sort sort = Sort.by("auctionNo").descending();
-        Pageable pageable = PageRequest.of(page-1,5,sort);
+        Pageable pageable = PageRequest.of(page-1,3,sort);
         log.info("page :: " + pageable.getPageSize());
         Page<AuctionBoard> list = null;
         log.info("키워드 :: "+keyword);
@@ -478,5 +481,7 @@ public class AuctionBoardController {
         Integer result = auctionBoardService.countAuctionByMemberId(memberId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+
 
 }

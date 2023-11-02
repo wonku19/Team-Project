@@ -73,10 +73,13 @@ public class AuctionBoardService {
         return auctionBoardDAO.findAllOrderByAuctionAttendNoDesc();
     }
 
-    public AuctionBoard updatePrice(int no, int price) {
+    public AuctionBoard updatePrice(int no, int price, String id) {
         AuctionBoard target = auctionBoardDAO.findById(no).orElse(null);
         if (target != null) {
             target.setCurrentPrice(price);
+            target.setBuyerPoint(price);
+            target.setBuyerId(id);
+            log.info(id);
             return auctionBoardDAO.save(target);
         }
         return null;

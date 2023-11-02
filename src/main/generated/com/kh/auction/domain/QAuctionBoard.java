@@ -44,6 +44,10 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public final StringPath auctionTitle = createString("auctionTitle");
 
+    public final StringPath buyerId = createString("buyerId");
+
+    public final NumberPath<Integer> buyerPoint = createNumber("buyerPoint", Integer.class);
+
     public final QCategory category;
 
     public final NumberPath<Integer> currentNum = createNumber("currentNum", Integer.class);

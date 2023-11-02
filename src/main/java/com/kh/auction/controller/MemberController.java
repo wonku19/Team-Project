@@ -207,6 +207,19 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
+    //최종입찰
+    @PutMapping("/user/buyerPoint")
+    public ResponseEntity<Member> updateBuyerPoint(@AuthenticationPrincipal String id, @RequestParam int point) {
+        Member existMember = memberService.show(id);
+        if (existMember != null) {
+            existMember.setPoint(point);
+            log.info(existMember.getPoint()+"ss"+point);
+            Member result = memberService.update(id,existMember.getPoint());
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
 
 
 

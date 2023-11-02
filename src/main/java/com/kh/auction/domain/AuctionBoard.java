@@ -52,6 +52,12 @@ public class AuctionBoard {
     @Column(name = "current_num")
     private int currentNum; // 입찰 횟수
 
+    @Column(name = "buyer_id")
+    private String buyerId;
+
+    @Column(name = "buyer_point")
+    private int buyerPoint;
+
     @ManyToOne
     @JoinColumn(name="category_no")
     private Category category;
