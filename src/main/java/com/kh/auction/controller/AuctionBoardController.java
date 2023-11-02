@@ -299,6 +299,7 @@ public class AuctionBoardController {
         // 경매 게시글을 조회하여 게시글 작성자의 아이디를 확인합니다.
         AuctionBoard auctionBoard = auctionBoardService.show(no);
         String postUserId = auctionBoard.getMemberId().getId(); // 게시글 작성자의 아이디
+        String[] imageList = auctionBoard.getAuctionImg().split(","); // 기존 이미지들
 
         // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
         if (!currentUserId.equals(postUserId)) {
@@ -308,21 +309,27 @@ public class AuctionBoardController {
 
         // 이미지 경로를 저장할 변수
         StringBuilder imagePaths = new StringBuilder();
+        imagePaths.append(auctionBoard.getAuctionImg()).append(",");
 
         try {
             // 각 이미지 처리
             for (MultipartFile image : images) {
-                String originalImage = image.getOriginalFilename();
-                String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
-                String uuid = UUID.randomUUID().toString();
-                String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
-                Path pathImage = Paths.get(saveImage);
 
-                // 이미지를 서버에 저장
-                image.transferTo(pathImage);
+                if(!Arrays.asList(imageList).contains(image.getOriginalFilename())) {
 
-                // 이미지 경로를 imagePaths에 추가
-                imagePaths.append(uuid).append("_").append(realImage).append(",");
+                    String originalImage = image.getOriginalFilename();
+                    String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
+                    String uuid = UUID.randomUUID().toString();
+                    String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
+                    Path pathImage = Paths.get(saveImage);
+
+                    // 이미지를 서버에 저장
+                    image.transferTo(pathImage);
+
+                    // 이미지 경로를 imagePaths에 추가
+                    imagePaths.append(uuid).append("_").append(realImage).append(",");
+
+                }
             }
 
             // 마지막 쉼표 제거
