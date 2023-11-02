@@ -58,6 +58,9 @@ public class AuctionBoard {
     @Column(name = "buyer_point")
     private int buyerPoint;
 
+    @Column(name = "auction_end")
+    private char auctionEnd;
+
     @ManyToOne
     @JoinColumn(name="category_no")
     private Category category;

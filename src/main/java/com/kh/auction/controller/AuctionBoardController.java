@@ -69,7 +69,6 @@ public class AuctionBoardController {
             @RequestParam(name = "sortOption", defaultValue = "1") int sortOption,
             @PathVariable(name = "categoryNo", required = false) Integer categoryNo
     ) {
-
         // 정렬 방식에 따라 Sort 객체 생성
         Sort sort = getSortForOption(sortOption);
 
@@ -83,6 +82,10 @@ public class AuctionBoardController {
             builder.and(expression);
         }
 
+        // auction_end가 "N"인 경우만 필터링
+        builder.and(QAuctionBoard.auctionBoard.auctionEnd.eq('N'));
+
+
         Page<AuctionBoard> result = auctionBoardService.showAll(pageable, builder);
 
         List<AuctionBoard> auctionBoards = result.getContent();
@@ -92,7 +95,7 @@ public class AuctionBoardController {
         for(AuctionBoard auctionBoard : auctionBoards){
             int no = auctionBoard.getCategory().getCategoryNo();
 
-            if(categoryNo!=null && no == categoryNo){
+            if(categoryNo != null && no == categoryNo){
                 categoryResults.add(auctionBoard);
             }
         }
@@ -234,7 +237,7 @@ public class AuctionBoardController {
 //            vo.setBuyerId(buyerId);
 //            vo.setBuyerPoint(buyerPoint);
             vo.setAuctionImg(imagePaths.toString());
-
+            vo.setAuctionEnd('N');
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
 

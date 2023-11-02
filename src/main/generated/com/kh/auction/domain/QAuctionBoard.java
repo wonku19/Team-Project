@@ -30,6 +30,8 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public final NumberPath<Integer> auctionEMoney = createNumber("auctionEMoney", Integer.class);
 
+    public final ComparablePath<Character> auctionEnd = createComparable("auctionEnd", Character.class);
+
     public final DateTimePath<java.util.Date> auctionEndDate = createDateTime("auctionEndDate", java.util.Date.class);
 
     public final NumberPath<Integer> auctionGMoney = createNumber("auctionGMoney", Integer.class);
