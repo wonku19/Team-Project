@@ -30,10 +30,11 @@ public class InterestController {
     @Autowired
     private AuctionBoardService auctionBoardService;
 
-    // 게시글 관심 등록 : POST - http://localhost:8080/api/auctionBoard/user/addList
+    // 게시글 관심 등록 : POST - http://localhost:8080/user/addList
     @PostMapping("/user/addList")
     public ResponseEntity<Interest> addList(@AuthenticationPrincipal String id, @RequestParam int auctionNo) {
         Interest vo = new Interest();
+        log.info(id + "wdwdw" + auctionNo);
         Member existMember = memberService.show(id);
         AuctionBoard auctionBoard = auctionBoardService.show(auctionNo);
         auctionBoard.setAuctionNo(auctionNo);
@@ -45,10 +46,10 @@ public class InterestController {
 
 
     // 게시글 관심 등록 취소 : DELETE - http://localhost:8080/api/user/checkDelete
-//    @DeleteMapping("/user/checkDelete")
-//    public ResponseEntity<Interest> delete(@RequestBody int no) {
-//        return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(no));
-//    }
+    @DeleteMapping("/user/checkDelete")
+    public ResponseEntity<Interest> delete(@RequestParam int no) {
+        return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(no));
+    }
 
 
     // 게시글 관심 등록 한번에 취소 : DELETE - http://localhost:8080/api/user/checkDeleteList
@@ -87,10 +88,10 @@ public class InterestController {
 
 
 
-//    @GetMapping("/interest")
-//    public ResponseEntity<List<Interest>> showAll() {
-//        return ResponseEntity.status(HttpStatus.OK).body(service.showAll());
-//    }
+    @GetMapping("/interest")
+    public ResponseEntity<List<Interest>> showAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(interestService.showAll());
+    }
 //
 //    @GetMapping("/interest/{id}")
 //    public ResponseEntity<Interest> show(@PathVariable int id) {
