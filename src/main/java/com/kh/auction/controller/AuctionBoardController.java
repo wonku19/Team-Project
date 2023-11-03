@@ -143,6 +143,7 @@ public class AuctionBoardController {
         }
     }
 
+    // 쿠키처리 (백으로하려다 프론트로 넘어감.)
     @GetMapping("/user/recentView")
     public ResponseEntity<List<AuctionBoard>> getRecentlyView(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -170,7 +171,6 @@ public class AuctionBoardController {
     @PutMapping("/user/auction/{auctionNo}")
     public ResponseEntity<AuctionBoard> placeBid(@PathVariable int auctionNo, @RequestBody AuctionBoard auction) {
         int price = auction.getCurrentPrice();
-
         // 경매 번호에 해당하는 경매 게시물을 조회
         AuctionBoard auctionBoard = auctionBoardService.show(auctionNo);
 
