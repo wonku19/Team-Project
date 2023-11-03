@@ -264,12 +264,9 @@ public class AuctionBoardController {
     public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
         int page = request.getPage();
         String keyword = request.getKeyword();
-
         Sort sort = Sort.by("auctionNo").descending();
-        Pageable pageable = PageRequest.of(page-1,5,sort);
-
+        Pageable pageable = PageRequest.of(page-1,5,sort); // 한 페이지에 5개
         Page<AuctionBoard> list = null;
-
         if(keyword == null){
             list = auctionBoardService.showAll(pageable);
         }else{

@@ -164,14 +164,15 @@ public class MemberController {
         String id = dto.getId();
         String password = dto.getPassword();
         String birthday = dto.getBirthday();
+
         Member existMember = memberService.show(id);
         if(existMember !=null){
             if(existMember.getBirthday().equals(birthday)){
-                Member result = memberService.passwordUpdate(id,password);
+                Member result = memberService.passwordUpdate(id,passwordEncoder.encode(password));
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).body(existMember);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
 
     }
     // 포인트 api
