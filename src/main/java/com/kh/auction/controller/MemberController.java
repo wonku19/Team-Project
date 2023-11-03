@@ -167,7 +167,7 @@ public class MemberController {
     }
 
 
-    // 비밀번호 잊어먹었을때..
+    // 비밀번호 잊어먹었을때
     @PutMapping("/public/updatePassword")
     public ResponseEntity<Member> updatePassword(@RequestBody MemberDTO dto){
         String id = dto.getId();
@@ -180,7 +180,7 @@ public class MemberController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(existMember);
 
     }
     // 포인트 api

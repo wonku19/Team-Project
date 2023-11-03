@@ -14,4 +14,5 @@ public class RequestDTO {
     private int page = 1;
     private String keyword;
     private int sortOption;
+
 }
