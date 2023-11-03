@@ -171,7 +171,7 @@ public class MemberController {
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(existMember);
 
     }
     // 포인트 api
