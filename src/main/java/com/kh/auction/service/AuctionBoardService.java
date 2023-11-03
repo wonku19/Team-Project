@@ -88,7 +88,7 @@ public class AuctionBoardService {
         Date currentDate = new Date(); // 현재 날짜 가져오기
 
         // 정렬
-        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionAttendNo).reversed());
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getCurrentNum).reversed());
 
         List<AuctionBoard> filteredAuctionBoards = new ArrayList<>();
 
