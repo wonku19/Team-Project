@@ -22,6 +22,7 @@ public class AuctionBoardService {
     @Autowired
     private AuctionBoardDAO auctionBoardDAO;
 
+
     public Page<AuctionBoard> showAll(Pageable pageable, BooleanBuilder builder) {
 //        return auctionBoardDAO.findAll(builder, pageable);
         return auctionBoardDAO.findAll(builder, pageable);
@@ -69,10 +70,13 @@ public class AuctionBoardService {
         return auctionBoardDAO.findAllOrderByAuctionAttendNoDesc();
     }
 
-    public AuctionBoard updatePrice(int no, int price) {
+    public AuctionBoard updatePrice(int no, int price, String id) {
         AuctionBoard target = auctionBoardDAO.findById(no).orElse(null);
         if (target != null) {
             target.setCurrentPrice(price);
+            target.setBuyerPoint(price);
+            target.setBuyerId(id);
+            log.info(id);
             return auctionBoardDAO.save(target);
         }
         return null;
@@ -150,6 +154,15 @@ public class AuctionBoardService {
         if (auctionBoard != null) {
             auctionBoard.setCurrentNum(auctionBoard.getCurrentNum() + 1);
             auctionBoard.setAuctionCheckNo(auctionBoard.getAuctionCheckNo() - 1);
+            return auctionBoardDAO.save(auctionBoard);
+        }
+        return null;
+    }
+
+    public AuctionBoard updateCategoryNo(int no, char end){
+        AuctionBoard auctionBoard = auctionBoardDAO.findById(no).orElse(null);
+        if (auctionBoard != null){
+            auctionBoard.setAuctionEnd(end);
             return auctionBoardDAO.save(auctionBoard);
         }
         return null;
