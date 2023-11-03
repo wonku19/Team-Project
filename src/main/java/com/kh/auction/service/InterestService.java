@@ -34,9 +34,6 @@ public class InterestService {
                 .execute();
     }
 
-
-
-
     public Interest delete(int auctionNo) {
         Interest target = interestDAO.findById(auctionNo).orElse(null);
         interestDAO.delete(target);
