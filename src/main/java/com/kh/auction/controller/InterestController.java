@@ -4,6 +4,7 @@ import com.kh.auction.domain.*;
 import com.kh.auction.service.AuctionBoardService;
 import com.kh.auction.service.InterestService;
 import com.kh.auction.service.MemberService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,13 +64,15 @@ public class InterestController {
         log.info(memberId +"관심 취소" + auctionNo);
         return ResponseEntity.status(HttpStatus.OK).body(interestService.deleteInterest(memberId, auctionNo));
     }
-
+    //wdw
 
     // 게시글 관심 등록 한번에 취소 : DELETE - http://localhost:8080/api/user/checkDeleteList
     @DeleteMapping("/user/checkDeleteList")
-    public ResponseEntity<Interest> checkAllDelete(@RequestParam List<Integer> list) {
+    @Transactional
+    public ResponseEntity<Interest> checkAllDelete(@AuthenticationPrincipal String memberId, @RequestParam List<Integer> list) {
+        log.info(memberId +"관심 취소" + list);
         for(int no : list) {
-            interestService.delete(no);
+            interestService.deleteInterest(memberId, no);
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
