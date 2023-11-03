@@ -22,7 +22,7 @@ public class CommentsService {
     @Autowired(required = true)
     private JPAQueryFactory queryFactory;
 
-    private final com.kh.auction.domain.QComments QComments = com.kh.auction.domain.QComments.comments;
+    private QComments QComments = com.kh.auction.domain.QComments.comments;
 
     // 게시글 1개에 따른 댓글 전체 조회
     public List<Comments> boardCommentsList(int no) {

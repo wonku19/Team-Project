@@ -33,6 +33,7 @@ public class InterestController {
     @Autowired
     private AuctionBoardService auctionBoardService;
 
+
     // 게시글 관심 등록 : POST - http://localhost:8080/user/addList
     @PostMapping("/user/addList")
     public ResponseEntity<Interest> addList(@AuthenticationPrincipal String id, @RequestParam int auctionNo) {
@@ -49,33 +50,18 @@ public class InterestController {
 
     // 중복확인
     @PostMapping("/user/interestDuplicate")
-    public ResponseEntity<Map<String, Boolean>> duplicate(@AuthenticationPrincipal String id, @RequestParam int no){
-        List<Interest> interest = interestService.duple(id);
-        log.info(interest+"asd");
-        boolean isDuplicate = false;
-        for(Interest cc : interest){
-            InterestDTO interestDTO = InterestDTO.builder()
-                    .interestNo(cc.getInterestNo())
-                    .build();
-            if(interestDTO.getInterestNo() == no){
-                isDuplicate = true;
-                Map<String, Boolean> response = new HashMap<>();
-                response.put("isDuplicate", isDuplicate);
-                return ResponseEntity.status(HttpStatus.OK).body(response);
-            }
-        }
+    public ResponseEntity<Boolean> duplicate(@AuthenticationPrincipal String memberId, @RequestParam int auctionNo){
+        Boolean num = interestService.duple(memberId, auctionNo) != null;
+        log.info(auctionNo+memberId);
 
-        log.info(id);
-        log.info(isDuplicate+"");
-        log.info(no+"");
-        return ResponseEntity.status(HttpStatus.OK).build();
-
+        return ResponseEntity.status(HttpStatus.OK).body(num);
     }
 
     // 게시글 관심 등록 취소 : DELETE - http://localhost:8080/api/user/checkDelete
     @DeleteMapping("/user/checkDelete")
-    public ResponseEntity<Interest> delete(@RequestParam int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(interestService.delete(no));
+    public ResponseEntity InterestDelete(@AuthenticationPrincipal String memberId, @RequestParam int auctionNo) {
+        log.info(memberId +"관심 취소" + auctionNo);
+        return ResponseEntity.status(HttpStatus.OK).body(interestService.deleteInterest(memberId, auctionNo));
     }
 
 
