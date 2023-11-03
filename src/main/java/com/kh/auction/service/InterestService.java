@@ -30,6 +30,11 @@ public class InterestService {
         return interestDAO.findByMemberId(id);
     }
 
+    // 게시물 관심등록 중복 체크
+    public List<Interest> duple(String id) {
+        return interestDAO.getInterestId(id);
+    }
+
     public List<Interest> showAll() {
         return interestDAO.findAll();
     }
