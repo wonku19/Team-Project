@@ -63,7 +63,7 @@ public class InterestController {
         log.info(memberId +"관심 취소" + auctionNo);
         return ResponseEntity.status(HttpStatus.OK).body(interestService.deleteInterest(memberId, auctionNo));
     }
-
+    //wdw
 
     // 게시글 관심 등록 한번에 취소 : DELETE - http://localhost:8080/api/user/checkDeleteList
     @DeleteMapping("/user/checkDeleteList")
