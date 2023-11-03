@@ -29,15 +29,23 @@ public class MemberService {
         return memberDAO.save(member);
     }
 
-    public Member duplicate(String id) {
+    public Member idDuplicate(String id) {
         Member target = memberDAO.findById(id).orElse(null);
         return target;
-
     }
 
-    public Member passwordUpdate(String id, String password){
+    public Member nickDuplicate(String nick) {
+        List<Member> target = memberDAO.findAll();
+        for(Member newTarget : target){
+            if(newTarget.getNick().equals(nick)){
+                return newTarget;
+            }
+        }
+        return null;
+    }
+    public Member passwordUpdate(String id, String password) {
         Member target = memberDAO.findById(id).orElse(null);
-        if(target !=null){
+        if (target != null) {
             target.setPassword(password);
             return memberDAO.save(target);
         }
@@ -53,6 +61,8 @@ public class MemberService {
         }
         return null;
     }
+
+
 
     // 내정보 수정 api
     public Member userUpdate(String id, String nick, String phone, String email, String addr) {

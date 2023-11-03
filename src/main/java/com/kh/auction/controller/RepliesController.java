@@ -59,7 +59,6 @@ public class RepliesController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
     @DeleteMapping("Replies/{id}")
     public ResponseEntity<Replies> delete(@PathVariable int id) {
         try {

@@ -17,14 +17,14 @@ public class Interest {
     @Column(name = "interest_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "interestSequence")
     @SequenceGenerator(name = "interestSequence", sequenceName = "SEQ_INTEREST", allocationSize = 1)
-    private int interest_no;
+    private int interestNo;
 
     @ManyToOne
     @JoinColumn(name="member_id")
-    private Member memberId;
+    private Member member;
 
     @ManyToOne
     @JoinColumn(name="auction_no")
-    private AuctionBoard auctionNo;
+    private AuctionBoard auction;
 
 }
