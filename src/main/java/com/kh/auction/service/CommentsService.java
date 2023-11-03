@@ -53,7 +53,6 @@ public class CommentsService {
     public Comments delete(int id) {
         Comments data = commentsDAO.findById(id).orElse(null);
         commentsDAO.delete(data);
-        log.info(data+"★");
         return data;
     }
 
