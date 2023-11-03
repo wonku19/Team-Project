@@ -1,12 +1,15 @@
 package com.kh.auction.controller;
 
 import com.kh.auction.domain.AuctionBoard;
+import com.kh.auction.domain.Category;
 import com.kh.auction.domain.Member;
 //import com.kh.auction.domain.MemberDTO;
 import com.kh.auction.domain.MemberDTO;
 import com.kh.auction.security.JwtAuthenticationFilter;
 import com.kh.auction.security.TokenProvider;
 import com.kh.auction.security.WebSecurityConfig;
+import com.kh.auction.service.AuctionBoardService;
+import com.kh.auction.service.CategoryService;
 import com.kh.auction.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import lombok.With;
@@ -36,6 +39,12 @@ public class MemberController {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private AuctionBoardService auctionBoardService;
+
+    @Autowired
+    private CategoryService categoryService;
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @GetMapping("/public")
     public ResponseEntity<List<Member>> showAll() {
@@ -188,6 +197,30 @@ public class MemberController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+    //최종입찰
+    @PutMapping("/user/buyerPoint")
+    public ResponseEntity<Member> updateBuyerPoint(@AuthenticationPrincipal String id, @RequestParam int point) {
+        Member existMember = memberService.show(id);
+        if (existMember != null) {
+            existMember.setPoint(point);
+            log.info(existMember.getPoint()+"ss"+point);
+            Member result = memberService.update(id,existMember.getPoint());
+            return ResponseEntity.status(HttpStatus.OK).body(result);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/public/updateCategory")
+    public ResponseEntity updateCategory(@RequestParam int no){
+        AuctionBoard auctionBoard = auctionBoardService.show(no);
+        if (auctionBoard != null) {
+            auctionBoard = auctionBoardService.updateCategoryNo(no,'Y');
+            log.info(auctionBoard+"");
+            return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
+            }
+        return null;
     }
 
 

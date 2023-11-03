@@ -57,11 +57,6 @@ public class AuctionBoardController {
     @Value("${team.upload.path}") // application.properties에 있는 변수
     private String uploadPath;
 
-
-
-
-
-
     @GetMapping(value = {"/public/auction/{categoryNo}" , "/public/auction"})
     public ResponseEntity<Map<String, Object>> BoardList(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -69,7 +64,6 @@ public class AuctionBoardController {
             @RequestParam(name = "sortOption", defaultValue = "1") int sortOption,
             @PathVariable(name = "categoryNo", required = false) Integer categoryNo
     ) {
-
         // 정렬 방식에 따라 Sort 객체 생성
         Sort sort = getSortForOption(sortOption);
 
@@ -83,6 +77,10 @@ public class AuctionBoardController {
             builder.and(expression);
         }
 
+        // auction_end가 "N"인 경우만 필터링
+        builder.and(QAuctionBoard.auctionBoard.auctionEnd.eq('N'));
+
+
         Page<AuctionBoard> result = auctionBoardService.showAll(pageable, builder);
 
         List<AuctionBoard> auctionBoards = result.getContent();
@@ -92,7 +90,7 @@ public class AuctionBoardController {
         for(AuctionBoard auctionBoard : auctionBoards){
             int no = auctionBoard.getCategory().getCategoryNo();
 
-            if(categoryNo!=null && no == categoryNo){
+            if(categoryNo != null && no == categoryNo){
                 categoryResults.add(auctionBoard);
             }
         }
@@ -166,10 +164,9 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(auctionBoards);
     }
 
-
     // 경매 입찰하기 / 입찰횟수 +1
     @PutMapping("/user/auction/{auctionNo}")
-    public ResponseEntity<AuctionBoard> placeBid(@PathVariable int auctionNo, @RequestBody AuctionBoard auction) {
+    public ResponseEntity<AuctionBoard> placeBid(@PathVariable int auctionNo, @RequestBody AuctionBoard auction , @AuthenticationPrincipal String id) {
         int price = auction.getCurrentPrice();
         // 경매 번호에 해당하는 경매 게시물을 조회
         AuctionBoard auctionBoard = auctionBoardService.show(auctionNo);
@@ -178,7 +175,8 @@ public class AuctionBoardController {
             // 현재 가격과 비교하여 유효한 입찰인 경우에만 업데이트
             if (price > auctionBoard.getCurrentPrice()) {
                 auctionBoard.setCurrentPrice(price); // 새로운 입찰 가격으로 설정
-                auctionBoardService.updatePrice(auctionNo, price);
+                auctionBoardService.updatePrice(auctionNo, price, id);
+                log.info(id);
                 auctionBoardService.updateCurrentNum(auctionNo); // 입찰 횟수 업데이트
                 return ResponseEntity.status(HttpStatus.OK).body(auctionBoard);
             } else {
@@ -230,8 +228,10 @@ public class AuctionBoardController {
             vo.setAuctionEMoney(eMoney);
             vo.setAuctionNowbuy(nowBuy);
             vo.setAuctionGMoney(gMoney);
+//            vo.setBuyerId(buyerId);
+//            vo.setBuyerPoint(buyerPoint);
             vo.setAuctionImg(imagePaths.toString());
-
+            vo.setAuctionEnd('N');
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
 
@@ -243,7 +243,7 @@ public class AuctionBoardController {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(vo.getAuctionDate());
             calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-//            calendar.add(Calendar.MINUTE, 1); // 테스트
+//            calendar.add(Calendar.MINUTE, 120); // 테스트
             vo.setAuctionEndDate(calendar.getTime());
 
             Member member = new Member();
@@ -279,15 +279,17 @@ public class AuctionBoardController {
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
-    // 게시글 수정 test2
+    // 게시글 수정
     @PutMapping("/user/auction/update/{no}")
     public ResponseEntity<AuctionBoard> update(@PathVariable int no, @AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
-        // 현재 로그인한 사용자의 아이디를 가져옵니다.
-        String currentUserId = id;
+        // 사용자 인증 정보를 가져오고, 현재 로그인한 사용자의 아이디를 확인합니다.
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String currentUserId = id; // 현재 사용자의 아이디
 
-        // 경매 게시물을 조회하여 게시글 작성자의 아이디를 확인합니다.
-        AuctionBoard existingAuction = auctionBoardService.show(no);
-        String postUserId = existingAuction.getMemberId().getId();
+        // 경매 게시글을 조회하여 게시글 작성자의 아이디를 확인합니다.
+        AuctionBoard auctionBoard = auctionBoardService.show(no);
+        String postUserId = auctionBoard.getMemberId().getId(); // 게시글 작성자의 아이디
+        String[] imageList = auctionBoard.getAuctionImg().split(","); // 기존 이미지들
 
         // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
         if (!currentUserId.equals(postUserId)) {
@@ -297,21 +299,27 @@ public class AuctionBoardController {
 
         // 이미지 경로를 저장할 변수
         StringBuilder imagePaths = new StringBuilder();
+        imagePaths.append(auctionBoard.getAuctionImg()).append(",");
 
         try {
             // 각 이미지 처리
             for (MultipartFile image : images) {
-                String originalImage = image.getOriginalFilename();
-                String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
-                String uuid = UUID.randomUUID().toString();
-                String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
-                Path pathImage = Paths.get(saveImage);
 
-                // 이미지를 서버에 저장
-                image.transferTo(pathImage);
+                if(!Arrays.asList(imageList).contains(image.getOriginalFilename())) {
 
-                // 이미지 경로를 imagePaths에 추가
-                imagePaths.append(uuid).append("_").append(realImage).append(",");
+                    String originalImage = image.getOriginalFilename();
+                    String realImage = originalImage.substring(originalImage.lastIndexOf("\\") + 1);
+                    String uuid = UUID.randomUUID().toString();
+                    String saveImage = uploadPath + File.separator + uuid + "_" + realImage;
+                    Path pathImage = Paths.get(saveImage);
+
+                    // 이미지를 서버에 저장
+                    image.transferTo(pathImage);
+
+                    // 이미지 경로를 imagePaths에 추가
+                    imagePaths.append(uuid).append("_").append(realImage).append(",");
+
+                }
             }
 
             // 마지막 쉼표 제거
@@ -320,32 +328,26 @@ public class AuctionBoardController {
             }
 
             // 업데이트된 필드 설정
-            existingAuction.setAuctionTitle(title);
-            existingAuction.setItemName(itemName);
-            existingAuction.setItemDesc(desc);
-            existingAuction.setAuctionSMoney(sMoney);
-            existingAuction.setAuctionEMoney(eMoney);
-            existingAuction.setAuctionNowbuy(nowBuy);
-            existingAuction.setAuctionGMoney(gMoney);
-            existingAuction.setAuctionImg(imagePaths.toString());
+            auctionBoard.setAuctionTitle(title);
+            auctionBoard.setItemName(itemName);
+            auctionBoard.setItemDesc(desc);
+            auctionBoard.setAuctionSMoney(sMoney);
+            auctionBoard.setAuctionEMoney(eMoney);
+            auctionBoard.setAuctionNowbuy(nowBuy);
+            auctionBoard.setAuctionGMoney(gMoney);
+            auctionBoard.setAuctionImg(imagePaths.toString());
 
             Category category = new Category();
             category.setCategoryNo(Integer.parseInt(categoryNo));
 
-            existingAuction.setCategory(category);
-
-            // AUCTION_END_DATE 설정 (AUCTION_DATE + 30일)
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(existingAuction.getAuctionDate());
-            calendar.add(Calendar.DAY_OF_MONTH, 30); // 30일 추가
-            existingAuction.setAuctionEndDate(calendar.getTime());
+            auctionBoard.setCategory(category);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         // 업데이트된 경매 게시물을 저장
-        AuctionBoard updatedAuction = auctionBoardService.update(existingAuction);
+        AuctionBoard updatedAuction = auctionBoardService.update(auctionBoard);
 
         if (updatedAuction != null) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedAuction);
@@ -391,8 +393,8 @@ public class AuctionBoardController {
     public ResponseEntity<List<AuctionBoard>> HotList() {
 
         try {
-            // 결과를 8개로 제한
-            List<AuctionBoard> result = auctionBoardService.findByHot(8);
+            // 결과를 10개로 제한
+            List<AuctionBoard> result = auctionBoardService.findByHot(10);
             log.info(""+result);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }catch (Exception e){
@@ -406,8 +408,8 @@ public class AuctionBoardController {
     @GetMapping("/public/auction/new")
     public ResponseEntity<List<AuctionBoard>> NewList() {
         try {
-            // 결과를 8개로 제한
-            List<AuctionBoard> result = auctionBoardService.findByNew(8);
+            // 결과를 10개로 제한
+            List<AuctionBoard> result = auctionBoardService.findByNew(10);
             log.info(""+result);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }catch (Exception e){
@@ -423,5 +425,7 @@ public class AuctionBoardController {
         Integer result = auctionBoardService.countAuctionByMemberId(memberId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+
 
 }

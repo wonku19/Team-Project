@@ -30,6 +30,8 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
 
     public final NumberPath<Integer> auctionEMoney = createNumber("auctionEMoney", Integer.class);
 
+    public final ComparablePath<Character> auctionEnd = createComparable("auctionEnd", Character.class);
+
     public final DateTimePath<java.util.Date> auctionEndDate = createDateTime("auctionEndDate", java.util.Date.class);
 
     public final NumberPath<Integer> auctionGMoney = createNumber("auctionGMoney", Integer.class);
@@ -43,6 +45,10 @@ public class QAuctionBoard extends EntityPathBase<AuctionBoard> {
     public final NumberPath<Integer> auctionSMoney = createNumber("auctionSMoney", Integer.class);
 
     public final StringPath auctionTitle = createString("auctionTitle");
+
+    public final StringPath buyerId = createString("buyerId");
+
+    public final NumberPath<Integer> buyerPoint = createNumber("buyerPoint", Integer.class);
 
     public final QCategory category;
 
