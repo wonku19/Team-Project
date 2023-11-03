@@ -158,7 +158,7 @@ public class MemberController {
     }
 
 
-    // 비밀번호 잊어먹었을때..
+    // 비밀번호 잊어먹었을때
     @PutMapping("/public/updatePassword")
     public ResponseEntity<Member> updatePassword(@RequestBody MemberDTO dto){
         String id = dto.getId();

@@ -262,79 +262,27 @@ public class AuctionBoardController {
 
     @PostMapping("/public/search")
     public ResponseEntity<AuctionBoardDTO> Search(@RequestBody RequestDTO request) {
-
-        // @RequestParam(name="page", defaultValue = "1") int page, @RequestParam(name="keyword",required = false) String keyword
-
-        log.info("request : " + request);
-
         int page = request.getPage();
-
         String keyword = request.getKeyword();
 
-        log.info("keyword :: " + keyword);
-
-        // required = false 를 주지 않았을땐 오류 났음
         Sort sort = Sort.by("auctionNo").descending();
         Pageable pageable = PageRequest.of(page-1,5,sort);
-        log.info("page :: " + pageable.getPageSize());
+
         Page<AuctionBoard> list = null;
-        log.info("키워드 :: "+keyword);
 
         if(keyword == null){
             list = auctionBoardService.showAll(pageable);
         }else{
             list = auctionBoardService.Search(keyword, pageable);
         }
-        log.info(""+list.getContent());
+
         AuctionBoardDTO dto = new AuctionBoardDTO();
-
-
-
         dto.setContent(list.getContent());
         dto.setGetTotalPages(list.getTotalPages());
         return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
-//        return ResponseEntity.status(HttpStatus.OK).build();
 
-//    }
-
-//     게시글 수정 test 1
-//    @PutMapping("/user/auction/update/{no}")
-//    public ResponseEntity<AuctionBoard> update(@PathVariable int no, @AuthenticationPrincipal String id, @RequestBody AuctionBoard updatedAuction) {
-//        // 현재 로그인한 사용자의 아이디를 가져옵니다.
-//        String currentUserId = id;
-//
-//        // 경매 게시물을 조회하여 게시글 작성자의 아이디를 확인합니다.
-//        AuctionBoard existingAuction = auctionBoardService.show(no);
-//        String postUserId = existingAuction.getMemberId().getId();
-//
-//        // 현재 로그인한 사용자와 게시글 작성자를 비교하여 권한 확인
-//        if (currentUserId.equals(postUserId)) {
-//            // 권한이 있는 경우, 요청된 업데이트 수행
-//            existingAuction.setAuctionTitle(updatedAuction.getAuctionTitle());
-//            existingAuction.setItemName(updatedAuction.getItemName());
-//            existingAuction.setItemDesc(updatedAuction.getItemDesc());
-//            existingAuction.setAuctionSMoney(updatedAuction.getAuctionSMoney());
-//            existingAuction.setAuctionEMoney(updatedAuction.getAuctionEMoney());
-//            existingAuction.setAuctionNowbuy(updatedAuction.getAuctionNowbuy());
-//            existingAuction.setAuctionGMoney(updatedAuction.getAuctionGMoney());
-//            existingAuction.setAuctionEndDate(updatedAuction.getAuctionEndDate());
-//
-//            // 업데이트된 경매 게시물을 저장
-//            existingAuction = auctionBoardService.update(existingAuction); // 변수 이름 변경
-//
-//            if (existingAuction != null) {
-//                return ResponseEntity.status(HttpStatus.OK).body(existingAuction); // 변수 이름 변경
-//            } else {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-//            }
-//        } else {
-//            // 권한이 없는 경우, 403 Forbidden 응답을 반환
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-//        }
-//    }
-
-//    // 게시글 수정 test2
+    // 게시글 수정 test2
     @PutMapping("/user/auction/update/{no}")
     public ResponseEntity<AuctionBoard> update(@PathVariable int no, @AuthenticationPrincipal String id, @RequestParam(name = "image", required = false) MultipartFile[] images, String title, String itemName, String desc, int sMoney, int eMoney, int gMoney, char nowBuy, String categoryNo) {
         // 현재 로그인한 사용자의 아이디를 가져옵니다.
