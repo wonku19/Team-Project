@@ -67,7 +67,7 @@ public class AuctionBoardController {
         // 정렬 방식에 따라 Sort 객체 생성
         Sort sort = getSortForOption(sortOption);
 
-        Pageable pageable = PageRequest.of(page - 1, 3, sort);
+        Pageable pageable = PageRequest.of(page - 1, 8, sort);
 
         QAuctionBoard AuctionBoard = QAuctionBoard.auctionBoard;
         BooleanBuilder builder = new BooleanBuilder();
