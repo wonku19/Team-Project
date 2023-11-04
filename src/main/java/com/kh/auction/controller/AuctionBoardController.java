@@ -80,7 +80,6 @@ public class AuctionBoardController {
         // auction_end가 "N"인 경우만 필터링
         builder.and(QAuctionBoard.auctionBoard.auctionEnd.eq('N'));
 
-
         Page<AuctionBoard> result = auctionBoardService.showAll(pageable, builder);
 
         List<AuctionBoard> auctionBoards = result.getContent();
@@ -89,7 +88,6 @@ public class AuctionBoardController {
 
         for(AuctionBoard auctionBoard : auctionBoards){
             int no = auctionBoard.getCategory().getCategoryNo();
-
             if(categoryNo != null && no == categoryNo){
                 categoryResults.add(auctionBoard);
             }
