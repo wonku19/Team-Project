@@ -68,14 +68,14 @@ public class InterestController {
 
     // 게시글 관심 등록 한번에 취소 : DELETE - http://localhost:8080/api/user/checkDeleteList
     @DeleteMapping("/user/checkDeleteList")
-    @Transactional
-    public ResponseEntity<Interest> checkAllDelete(@AuthenticationPrincipal String memberId, @RequestParam List<Integer> list) {
+    public ResponseEntity checkAllDelete(@AuthenticationPrincipal String memberId, @RequestParam List<Integer> list) {
         log.info(memberId +"관심 취소" + list);
         for(int no : list) {
-            interestService.deleteInterest(memberId, no);
+            log.info(memberId +"관심 취소" + no);
+            interestService.deleteInterestList(memberId, no);
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 

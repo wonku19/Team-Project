@@ -34,6 +34,16 @@ public class InterestService {
                 .execute();
     }
 
+    // 게시글List 관심등록 취소
+    @Transactional
+    public long deleteInterestList(String memberId, int auctionNo) {
+        return queryFactory.delete(qInterest)
+                .where(qInterest.member.id.eq(memberId))
+                .where(qInterest.interestNo.eq(auctionNo))
+                .execute();
+    }
+
+
     public Interest delete(int auctionNo) {
         Interest target = interestDAO.findById(auctionNo).orElse(null);
         interestDAO.delete(target);
