@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 public class Category2 {
 
     @Id
-    @Column(name = "category_no")
+    @Column(name = "category2_no")
     @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "category2Seq")
     @SequenceGenerator(name = "category2Seq", sequenceName = "SEQ_MAIN_CATEGORY2", allocationSize = 1)
-    private Integer categoryNo;
+    private Integer category2No;
 
-    @Column(name = "category_name")
-    private String categoryName;
+    @Column(name = "category2_name")
+    private String category2Name;
 }

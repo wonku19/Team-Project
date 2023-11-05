@@ -54,7 +54,7 @@ public class CategoryController {
     }
 
 
-    @GetMapping("/public/category2/{no}")
+    @GetMapping("/public/category2")
     public ResponseEntity<Category2> show2(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService2.show(no));
     }

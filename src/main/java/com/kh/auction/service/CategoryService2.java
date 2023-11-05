@@ -39,7 +39,7 @@ public class CategoryService2 {
 
 
     public Category2 update(Category2 category2) {
-        Category2 target = category2DAO.findById(category2.getCategoryNo()).orElse(null);
+        Category2 target = category2DAO.findById(category2.getCategory2No()).orElse(null);
         if (target != null) {
             return category2DAO.save(category2);
         }

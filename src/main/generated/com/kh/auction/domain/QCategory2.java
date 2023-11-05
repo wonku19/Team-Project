@@ -19,9 +19,9 @@ public class QCategory2 extends EntityPathBase<Category2> {
 
     public static final QCategory2 category2 = new QCategory2("category2");
 
-    public final StringPath categoryName = createString("categoryName");
+    public final StringPath category2Name = createString("category2Name");
 
-    public final NumberPath<Integer> categoryNo = createNumber("categoryNo", Integer.class);
+    public final NumberPath<Integer> category2No = createNumber("category2No", Integer.class);
 
     public QCategory2(String variable) {
         super(Category2.class, forVariable(variable));
