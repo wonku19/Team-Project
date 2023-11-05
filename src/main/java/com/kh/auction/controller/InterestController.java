@@ -78,8 +78,6 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-
-
     // 자신이 관심 등록한 게시글 목록 조회 : GET - http://localhost:8080/api/user/myInterestList
     @GetMapping("/user/myInterestList")
     public ResponseEntity<List<InterestDTO>> showInterestList(@AuthenticationPrincipal String id) {
@@ -99,25 +97,9 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.OK).body(interestDTOs);
     }
 
-
-
     @GetMapping("/interest")
     public ResponseEntity<List<Interest>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(interestService.showAll());
     }
-//
-//    @GetMapping("/interest/{id}")
-//    public ResponseEntity<Interest> show(@PathVariable int id) {
-//        return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
-//    }
-//
-//    @PutMapping("/interest")
-//    public ResponseEntity<Interest> update(@PathVariable Interest interest) {
-//        Interest result = service.update(interest);
-//        if(result != null){
-//            return ResponseEntity.status(HttpStatus.OK).body(result);
-//        }
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//    }
 
 }

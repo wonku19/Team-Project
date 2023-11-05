@@ -393,7 +393,6 @@ public class AuctionBoardController {
         try {
             // 결과를 10개로 제한
             List<AuctionBoard> result = auctionBoardService.findByHot(10);
-            log.info(""+result);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }catch (Exception e){
             e.printStackTrace();
@@ -408,7 +407,6 @@ public class AuctionBoardController {
         try {
             // 결과를 10개로 제한
             List<AuctionBoard> result = auctionBoardService.findByNew(10);
-            log.info(""+result);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }catch (Exception e){
             e.printStackTrace();

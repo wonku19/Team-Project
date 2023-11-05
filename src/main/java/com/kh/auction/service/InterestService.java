@@ -43,13 +43,6 @@ public class InterestService {
                 .execute();
     }
 
-
-    public Interest delete(int auctionNo) {
-        Interest target = interestDAO.findById(auctionNo).orElse(null);
-        interestDAO.delete(target);
-        return target;
-    }
-
     // 자신이 관심등록한 게시물 목록 조회
     public List<Interest> findByMemberId(String id) {
         return interestDAO.findByMemberId(id);
@@ -72,5 +65,10 @@ public class InterestService {
         return interestDAO.save(interest);
     }
 
+    public Interest delete(int auctionNo) {
+        Interest target = interestDAO.findById(auctionNo).orElse(null);
+        interestDAO.delete(target);
+        return target;
+    }
 
 }
