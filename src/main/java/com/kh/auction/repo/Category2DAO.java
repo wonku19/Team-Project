@@ -1,6 +1,5 @@
 package com.kh.auction.repo;
 
-import com.kh.auction.domain.Category2;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

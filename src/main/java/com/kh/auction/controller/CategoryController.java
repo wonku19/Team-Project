@@ -1,9 +1,7 @@
 package com.kh.auction.controller;
 
 import com.kh.auction.domain.Category;
-import com.kh.auction.domain.Category2;
 import com.kh.auction.service.CategoryService;
-import com.kh.auction.service.CategoryService2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +17,6 @@ import java.util.List;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
-
-    @Autowired
-    private CategoryService2 categoryService2;
 
     @GetMapping("/public/category")
     public ResponseEntity<List<Category>> showAll() {
@@ -52,12 +47,5 @@ public class CategoryController {
     public ResponseEntity<Category> delete(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.delete(no));
     }
-
-
-    @GetMapping("/public/category2")
-    public ResponseEntity<Category2> show2(@PathVariable int no) {
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService2.show(no));
-    }
-
 
 }
