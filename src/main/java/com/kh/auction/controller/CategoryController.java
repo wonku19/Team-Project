@@ -20,7 +20,6 @@ public class CategoryController {
 
     @GetMapping("/public/category")
     public ResponseEntity<List<Category>> showAll() {
-        log.info("category : ");
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.showAll());
     }
 
@@ -48,6 +47,5 @@ public class CategoryController {
     public ResponseEntity<Category> delete(@PathVariable int no) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.delete(no));
     }
-
 
 }

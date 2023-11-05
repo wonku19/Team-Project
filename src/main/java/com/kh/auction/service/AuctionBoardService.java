@@ -1,16 +1,12 @@
 package com.kh.auction.service;
 
 import com.kh.auction.domain.AuctionBoard;
-import com.kh.auction.domain.Delivery;
-import com.kh.auction.domain.Member;
 import com.kh.auction.repo.AuctionBoardDAO;
 import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -91,8 +87,8 @@ public class AuctionBoardService {
         List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
         Date currentDate = new Date(); // 현재 날짜 가져오기
 
-        // 정렬
-        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionAttendNo).reversed());
+        // 경매 참여 인원수가 많은 순으로 정렬
+        allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getCurrentNum).reversed());
 
         List<AuctionBoard> filteredAuctionBoards = new ArrayList<>();
 
@@ -117,7 +113,7 @@ public class AuctionBoardService {
         List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
         Date currentDate = new Date(); // 현재 날짜 가져오기
 
-        // 정렬
+        // 경매 게시글 등록 시간 최신순으로 정렬
         allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionDate).reversed());
 
         List<AuctionBoard> filteredAuctionBoards = new ArrayList<>();

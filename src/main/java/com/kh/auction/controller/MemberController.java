@@ -67,7 +67,7 @@ public class MemberController {
     }
     // 유저들 회원가입
     @PostMapping("/public/create")
-    public ResponseEntity UserCreate(@RequestBody MemberDTO dto) {
+    public ResponseEntity userCreate(@RequestBody MemberDTO dto) {
         Member member = Member.builder()
                 .id(dto.getId())
                 .password(passwordEncoder.encode(dto.getPassword()))
@@ -80,29 +80,8 @@ public class MemberController {
                 .birthday(dto.getBirthday())
                 .authority("ROLE_USER")
                 .build();
-        log.info("멤버"+member);
-        // 서비스를 이용해 리포지터리에 유저 저장
         Member registerMember = memberService.create(member);
-        MemberDTO responseDTO = dto.builder()
-                .id(registerMember.getId())
-                .name(registerMember.getName())
-                .addr(registerMember.getAddr())
-                .nick(registerMember.getNick())
-                .phone(registerMember.getPhone())
-
-                .email(registerMember.getEmail())
-                .sphone(registerMember.getSphone())
-                .authority(registerMember.getAuthority())
-                .build();
-        return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
-    }
-
-
-    @GetMapping(value = "/users", produces = "application/json")
-    public ResponseEntity<Member> userShow(@AuthenticationPrincipal String id) {
-        Member member = new Member();
-        member.setId(id);
-        return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
+        return ResponseEntity.status(HttpStatus.OK).body(registerMember);
     }
 
     // 어드민 회원가입
@@ -120,7 +99,6 @@ public class MemberController {
                 .addr(dto.getAddr())
                 .authority("ROLE_ADMIN")
                 .build();
-        log.info("멤버"+member);
         // 서비스를 이용해 리포지터리에 유저 저장
         Member registerMember = memberService.create(member);
         MemberDTO responseDTO = dto.builder()
@@ -138,19 +116,24 @@ public class MemberController {
 
 
     // 아이디 중복
-    @PostMapping("/public/duplicate")
-    public ResponseEntity<Map<String, Boolean>> duplicate(@RequestParam(name = "id") String id) {
-        try {
-            boolean isDuplicate = memberService.duplicate(id) != null;
-            log.info(id + (isDuplicate ? " 있는 아이디 입니다" : " 사용 가능한 아이디 입니다"));
-            Map<String, Boolean> response = new HashMap<>(); // 혹은 boolean 클래스 만들어서 객체지향성 높이기
-            response.put("isDuplicate", isDuplicate);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+    @PostMapping("/public/idDuplicate")
+    public ResponseEntity<Map<String, Boolean>> idDuplicate(@RequestParam(name = "id") String id) {
+        boolean isDuplicate = memberService.idDuplicate(id) == null;
+        Map<String, Boolean> response = new HashMap<>(); // 혹은 boolean 클래스 만들어서 객체지향성 높이기
+        response.put("isDuplicate", isDuplicate);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    // 닉네임 중복
+
+    @PostMapping("/public/nickDuplicate")
+    public ResponseEntity<Map<String, Boolean>> nickDuplicate(@RequestParam(name = "nick") String nick) {
+        boolean isDuplicate = memberService.nickDuplicate(nick) == null;
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isDuplicate", isDuplicate);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 
     @DeleteMapping("/user/{id}")
     public ResponseEntity<Member> delete(@PathVariable String id) {
@@ -158,9 +141,8 @@ public class MemberController {
     }
 
     @PostMapping("/public/signin")
-    public ResponseEntity authenticate(@RequestBody MemberDTO dto){
+    public ResponseEntity Login(@RequestBody MemberDTO dto){
         Member member = memberService.getByCredentials(dto.getId(), dto.getPassword(), passwordEncoder);
-        log.info(dto.getId()+"ㅂㅁ"+dto.getPassword());
         if(member!=null){
             String token = tokenProvider.create(member);
             MemberDTO responseDTO = MemberDTO.builder()
@@ -185,21 +167,21 @@ public class MemberController {
     }
 
 
-    // 비밀번호 수정
+    // 비밀번호 잊어먹었을때
     @PutMapping("/public/updatePassword")
     public ResponseEntity<Member> updatePassword(@RequestBody MemberDTO dto){
         String id = dto.getId();
         String password = dto.getPassword();
         String birthday = dto.getBirthday();
+
         Member existMember = memberService.show(id);
         if(existMember !=null){
             if(existMember.getBirthday().equals(birthday)){
-                existMember.setPassword(password);
-                Member result = memberService.passwordUpdate(id,password);
+                Member result = memberService.passwordUpdate(id,passwordEncoder.encode(password));
                 return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(null);
 
     }
     // 포인트 api
@@ -267,35 +249,37 @@ public class MemberController {
 
 
     // 비밀번호 확인
-    @PostMapping("/user/pwdChack")
-    public ResponseEntity<Member> chackPassword(@AuthenticationPrincipal String id ,@RequestBody MemberDTO dto) {
+    @PostMapping("/user/pwdCheck")
+    public ResponseEntity<Boolean> checkPassword(@AuthenticationPrincipal String id ,@RequestBody MemberDTO dto) {
         Member existMember = memberService.show(id);
         String password = dto.getPassword();
+        boolean result = false;
+
         if(existMember.getPassword() !=null){
-            if(existMember.getPassword().equals(password)){
-                existMember.setPassword(password);
-            Member result = memberService.passwordUpdate(id,password);
-            return ResponseEntity.status(HttpStatus.OK).body(result);
+            if(passwordEncoder.matches(password, existMember.getPassword())){
+                result = true;
+                return ResponseEntity.status(HttpStatus.OK).body(result);
             }
         }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
 
-    // 비밀번호 변경
-    @PutMapping("/user/pwdUp")
+    // 내정보에서 비밀번호 변경
+    @PutMapping("/user/pwdUpdate")
     public ResponseEntity<Member> updatePassword(@AuthenticationPrincipal String id ,@RequestBody MemberDTO dto){
         Member existMember = memberService.show(id);
+        log.info(existMember.getPassword()+"기존 비밀번호");
         String password = dto.getPassword();
-        if(existMember.getPassword() !=null){
-//            if(existMember.getPassword().equals(password)){
-//                existMember.setPassword(password);
-                Member result = memberService.passwordUpdate(id,password);
-                result.setPassword(passwordEncoder.encode(dto.getPassword()));
-                return ResponseEntity.status(HttpStatus.OK).body(result);
-//            }
-        }
-        return ResponseEntity.status(HttpStatus.OK).build();
+        log.info(password);
+        
+        Member result = memberService.passwordUpdate(existMember.getId(),passwordEncoder.encode(password));
+
+        log.info(result+"");
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+
+    }
+
 
     }
 
@@ -313,4 +297,3 @@ public class MemberController {
 //    @GetMapping("/user/pointList")
 //    public ResponseEntity<>
 
-}
