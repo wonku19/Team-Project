@@ -53,20 +53,21 @@ public class MemberController {
 
     @GetMapping("/user/show")
     public ResponseEntity<Member> show(@AuthenticationPrincipal String id) {
-        Member member = memberService.show(id);
-        try{
-            if(member.getAuthority().equals("ROLE_USER")){
-                return ResponseEntity.status(HttpStatus.OK).body(memberService.show(id));
-            }else{
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
+        try {
+            log.info("Attempting to show member with id: {}", id);
+
+            Member member = memberService.show(id);
+
+            log.info("Successfully retrieved member: {}", member);
+
+            return ResponseEntity.status(HttpStatus.OK).body(member);
+        } catch (Exception e) {
+            log.error("Error while processing show request", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
     // 유저들 회원가입
-    @PostMapping("/public/create")
+    @PostMapping("/public/user/create")
     public ResponseEntity userCreate(@RequestBody MemberDTO dto) {
         Member member = Member.builder()
                 .id(dto.getId())
@@ -79,6 +80,7 @@ public class MemberController {
                 .addr(dto.getAddr())
                 .birthday(dto.getBirthday())
                 .authority("ROLE_USER")
+                .role(dto.getRole())
                 .build();
         Member registerMember = memberService.create(member);
         return ResponseEntity.status(HttpStatus.OK).body(registerMember);
@@ -98,6 +100,7 @@ public class MemberController {
                 .sphone(dto.getSphone())
                 .addr(dto.getAddr())
                 .authority("ROLE_ADMIN")
+                .role(dto.getRole())
                 .build();
         // 서비스를 이용해 리포지터리에 유저 저장
         Member registerMember = memberService.create(member);
@@ -109,6 +112,7 @@ public class MemberController {
                 .email(registerMember.getEmail())
                 .phone(registerMember.getPhone())
                 .sphone(registerMember.getSphone())
+                .role(registerMember.getRole())
                 .authority(registerMember.getAuthority())
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(responseDTO);
@@ -184,6 +188,7 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
 
     }
+
     // 포인트 api
     @PutMapping("/user/point")
     public ResponseEntity<Member> updatePoint(@AuthenticationPrincipal String id, @RequestBody Member member) {
@@ -204,7 +209,6 @@ public class MemberController {
         Member existMember = memberService.show(id);
         if (existMember != null) {
             existMember.setPoint(point);
-            log.info(existMember.getPoint()+"ss"+point);
             Member result = memberService.update(id,existMember.getPoint());
             return ResponseEntity.status(HttpStatus.OK).body(result);
         } else {

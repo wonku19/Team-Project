@@ -87,7 +87,7 @@ public class AuctionBoardService {
         List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
         Date currentDate = new Date(); // 현재 날짜 가져오기
 
-        // 경매 참여 인원수가 많은 순으로 정렬
+        // 정렬
         allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getCurrentNum).reversed());
 
         List<AuctionBoard> filteredAuctionBoards = new ArrayList<>();
@@ -113,7 +113,7 @@ public class AuctionBoardService {
         List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
         Date currentDate = new Date(); // 현재 날짜 가져오기
 
-        // 경매 게시글 등록 시간 최신순으로 정렬
+        // 정렬
         allAuctionBoards.sort(Comparator.comparing(AuctionBoard::getAuctionDate).reversed());
 
         List<AuctionBoard> filteredAuctionBoards = new ArrayList<>();

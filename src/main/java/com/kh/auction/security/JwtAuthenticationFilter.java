@@ -26,8 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 한 번�
 
     @Autowired
     private TokenProvider tokenProvider;
-    @Autowired
-    private MemberService service;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 요청에서 토큰 가져오기
@@ -37,21 +35,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { // 한 번�
             // Member -> id
             String id = tokenProvider.validateAndGetUserId(token);
             String authority = tokenProvider.validateAndGetUserAuthority(token);
-
+            log.info(authority);
                 // 사용자가 USER 권한인 경우
-                if (authority.equals("ROLE_USER")) {
+
+                    log.info(authority);
                     AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                             id, // 인증된 사용자 정보
                             null,
-                            AuthorityUtils.NO_AUTHORITIES
+                            AuthorityUtils.createAuthorityList(authority)
                     );
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                     securityContext.setAuthentication(authentication);
                     SecurityContextHolder.setContext(securityContext);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                }
             }
         filterChain.doFilter(request, response);
     }

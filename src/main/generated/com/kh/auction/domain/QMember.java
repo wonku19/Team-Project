@@ -39,6 +39,8 @@ public class QMember extends EntityPathBase<Member> {
 
     public final NumberPath<Integer> point = createNumber("point", Integer.class);
 
+    public final EnumPath<com.kh.auction.user.Role> role = createEnum("role", com.kh.auction.user.Role.class);
+
     public final DateTimePath<java.util.Date> singupDate = createDateTime("singupDate", java.util.Date.class);
 
     public final StringPath sphone = createString("sphone");

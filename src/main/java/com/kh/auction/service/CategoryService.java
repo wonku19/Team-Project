@@ -18,6 +18,11 @@ public class CategoryService {
     @Autowired
     private CategoryDAO categoryDAO;
 
+//    @Autowired(required = true)
+//    private JPAQueryFactory queryFactory;
+
+//    private final QVideoComment qVideoComment = QVideoComment.videoComment;
+
     public List<Category> findByAuctionNo(int auctionNo){
         return categoryDAO.findByAuctionNo(auctionNo);
     }

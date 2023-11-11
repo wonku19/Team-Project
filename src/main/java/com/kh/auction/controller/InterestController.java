@@ -68,15 +68,17 @@ public class InterestController {
 
     // 게시글 관심 등록 한번에 취소 : DELETE - http://localhost:8080/api/user/checkDeleteList
     @DeleteMapping("/user/checkDeleteList")
-    public ResponseEntity checkAllDelete(@AuthenticationPrincipal String memberId, @RequestParam List<Integer> list) {
+    @Transactional
+    public ResponseEntity<Interest> checkAllDelete(@AuthenticationPrincipal String memberId, @RequestParam List<Integer> list) {
         log.info(memberId +"관심 취소" + list);
         for(int no : list) {
-            log.info(memberId +"관심 취소" + no);
-            interestService.deleteInterestList(memberId, no);
+            interestService.deleteInterest(memberId, no);
         }
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
+
+
 
     // 자신이 관심 등록한 게시글 목록 조회 : GET - http://localhost:8080/api/user/myInterestList
     @GetMapping("/user/myInterestList")
@@ -97,9 +99,25 @@ public class InterestController {
         return ResponseEntity.status(HttpStatus.OK).body(interestDTOs);
     }
 
+
+
     @GetMapping("/interest")
     public ResponseEntity<List<Interest>> showAll() {
         return ResponseEntity.status(HttpStatus.OK).body(interestService.showAll());
     }
+//
+//    @GetMapping("/interest/{id}")
+//    public ResponseEntity<Interest> show(@PathVariable int id) {
+//        return ResponseEntity.status(HttpStatus.OK).body(service.show(id));
+//    }
+//
+//    @PutMapping("/interest")
+//    public ResponseEntity<Interest> update(@PathVariable Interest interest) {
+//        Interest result = service.update(interest);
+//        if(result != null){
+//            return ResponseEntity.status(HttpStatus.OK).body(result);
+//        }
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+//    }
 
 }

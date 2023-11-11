@@ -1,5 +1,6 @@
 package com.kh.auction.domain;
 
+import com.kh.auction.user.Role;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,5 +42,7 @@ public class MemberDTO {
     private String authority;
 
     private int point;
+
+    private Role role;
 
 }

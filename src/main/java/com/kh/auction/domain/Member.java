@@ -1,5 +1,6 @@
 package com.kh.auction.domain;
 
+import com.kh.auction.user.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,5 +45,7 @@ public class Member {
     @Column(name="member_point")
     private int point;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
 
