@@ -387,12 +387,12 @@ public class AuctionBoardController {
     }
 
     // Hot 게시글
-    @GetMapping("/public/auction/hot")
-    public ResponseEntity<List<AuctionBoard>> HotList() {
+    @GetMapping("/public/auction/best")
+    public ResponseEntity<List<AuctionBoard>> BestList() {
 
         try {
             // 결과를 10개로 제한
-            List<AuctionBoard> result = auctionBoardService.findByHot(10);
+            List<AuctionBoard> result = auctionBoardService.findByBest(10);
             return ResponseEntity.status(HttpStatus.OK).body(result);
         }catch (Exception e){
             e.printStackTrace();

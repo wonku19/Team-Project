@@ -34,6 +34,16 @@ public class InterestService {
                 .execute();
     }
 
+    // 게시물 관심등록 중복 체크
+    public Integer duple(String memberId, int auctionNo) {
+        return interestDAO.getInterestId(memberId, auctionNo);
+    }
+
+    // 자신이 관심등록한 게시글List 조회
+    public List<Interest> findByMemberId(String id) {
+        return interestDAO.findByMemberId(id);
+    }
+
     // 게시글List 관심등록 취소
     @Transactional
     public long deleteInterestList(String memberId, int auctionNo) {
@@ -41,16 +51,6 @@ public class InterestService {
                 .where(qInterest.member.id.eq(memberId))
                 .where(qInterest.interestNo.eq(auctionNo))
                 .execute();
-    }
-
-    // 자신이 관심등록한 게시물 목록 조회
-    public List<Interest> findByMemberId(String id) {
-        return interestDAO.findByMemberId(id);
-    }
-
-    // 게시물 관심등록 중복 체크
-    public Integer duple(String memberId, int auctionNo) {
-        return interestDAO.getInterestId(memberId, auctionNo);
     }
 
     public List<Interest> showAll() {

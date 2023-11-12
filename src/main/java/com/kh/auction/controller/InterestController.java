@@ -53,7 +53,6 @@ public class InterestController {
     @PostMapping("/user/interestDuplicate")
     public ResponseEntity<Boolean> duplicate(@AuthenticationPrincipal String memberId, @RequestParam int auctionNo){
         Boolean num = interestService.duple(memberId, auctionNo) != null;
-        log.info(auctionNo+memberId);
 
         return ResponseEntity.status(HttpStatus.OK).body(num);
     }
@@ -61,7 +60,6 @@ public class InterestController {
     // 게시글 관심 등록 취소 : DELETE - http://localhost:8080/api/user/checkDelete
     @DeleteMapping("/user/checkDelete")
     public ResponseEntity InterestDelete(@AuthenticationPrincipal String memberId, @RequestParam int auctionNo) {
-        log.info(memberId +"관심 취소" + auctionNo);
         return ResponseEntity.status(HttpStatus.OK).body(interestService.deleteInterest(memberId, auctionNo));
     }
     //wdw
@@ -69,9 +67,7 @@ public class InterestController {
     // 게시글 관심 등록 한번에 취소 : DELETE - http://localhost:8080/api/user/checkDeleteList
     @DeleteMapping("/user/checkDeleteList")
     public ResponseEntity checkAllDelete(@AuthenticationPrincipal String memberId, @RequestParam List<Integer> list) {
-        log.info(memberId +"관심 취소" + list);
         for(int no : list) {
-            log.info(memberId +"관심 취소" + no);
             interestService.deleteInterestList(memberId, no);
         }
 

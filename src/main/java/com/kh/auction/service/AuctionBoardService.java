@@ -83,7 +83,7 @@ public class AuctionBoardService {
     }
 
     // Hot 게시글
-    public List<AuctionBoard> findByHot(int no) {
+    public List<AuctionBoard> findByBest(int no) {
         List<AuctionBoard> allAuctionBoards = auctionBoardDAO.findAll();
         Date currentDate = new Date(); // 현재 날짜 가져오기
 
